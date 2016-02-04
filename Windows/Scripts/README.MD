@@ -1,6 +1,4 @@
-# Folder contents
-
-**Powershell scripts**  
+#**Powershell scripts**  
 
 **_P9_CheckPlatform_Functions.ps1_**
 - Functions to validate each one of the system requirements to run OutSystems Platform 9
