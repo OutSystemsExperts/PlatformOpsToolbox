@@ -27,7 +27,7 @@ Set-ExecutionPolicy $Policy
 
 ## Check if WMI is available on the remote machine
 $WMIAvailable = Check_ISWMIAvailable -ServerAddress $ServerAddress
-if($WMIAvailable){
+if($WMIAvailable -eq "True"){
     ## Validate .Net Framwork 3.5
    Write-Host 'Validating .NET Framework 3.5' -ForegroundColor Gray
    Check_NETFramework35 -ServerAddress $ServerAddress
