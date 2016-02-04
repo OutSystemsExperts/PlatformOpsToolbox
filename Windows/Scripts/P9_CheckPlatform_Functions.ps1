@@ -1,4 +1,5 @@
-﻿## 18-Jan-2016 - Initial version (img)
+
+## 18-Jan-2016 - Initial version (img)
 ## Support for Windows Server 2008 and Windows Server 2012
 ## Must be updated whenever OS support for a new Windows OS is released
 ## Contains functions to get information about the mandatory requirements for the OutSystems Platform
@@ -87,7 +88,7 @@ If($ServerAddress){
 $OSVersion = Get-WmiObject -ComputerName $ServerAddress -class Win32_OperatingSystem
 
 ##If null or empty it returned an error
-if($OSVersion -eq "True"){
+if($OSVersion){
     ##Windows Server 2008
     If($OSVersion.caption -like '*Microsoft Windows Server 2008*'){
 
@@ -106,7 +107,7 @@ if($OSVersion -eq "True"){
 
 } Else{
 
-    return "Unable to get Operating System version"
+    return 'Unable to get Operating System version'
 }
 
 } Else {
@@ -206,7 +207,7 @@ if($OSVersion -eq "True"){
 ###########################################################
 function Check_GenericWMIQuery([string]$ServerAddress, [string]$WMIObjectName){
 
-    $check = Get-WindowsFeature | Where-Object {$_.Name -eq $WMIObjectName}
+    $check = Get-WindowsFeature -ComputerName $ServerAddress | Where-Object {$_.Name -eq $WMIObjectName}
     return $check
 
 }
@@ -251,6 +252,7 @@ if($OSVersion -eq "True"){
 function Check_RoleApplicationServerNET35Features([string]$ServerAddress){
 
 if($ServerAddress){
+
 
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 

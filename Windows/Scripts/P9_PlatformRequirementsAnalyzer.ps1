@@ -1,13 +1,11 @@
 ﻿## 19-Jan-2016 - Initial version (img)
 ## Validate the pre-requirements for OutSystems Platform
 
-
 ## As input the script requires the Address of the server you want to validate
 Param(
 [Parameter(Mandatory=$True)]
 [string]$ServerAddress
 )
-
 
 ## Import script that contains validation functions
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
@@ -34,9 +32,6 @@ if($WMIAvailable -eq "True"){
    Write-Host 'Validating Application Server role' -ForegroundColor Gray
    Check_RoleApplicationServer -ServerAddress $ServerAddress
 
-   ## If 2012 check Application Server Role dependency
-   $ServerOSVersion = Check_ServerOSVersion -ServerAddress $ServerAddress
-   
    ## Check Application Server framework dependency
    Write-Host 'Validating Application Server Role .NET Framework 3.5 Features dependency' -ForegroundColor Gray
    Check_RoleApplicationServerNET35Features -ServerAddress $ServerAddress
@@ -44,7 +39,7 @@ if($WMIAvailable -eq "True"){
    ## Check Web Server role
    Write-Host 'Validating Web Server Role' -ForegroundColor Gray
    Check_RoleWebServer -ServerAddress $ServerAddress
-    
+
    ## Check IIS Default Document
    Write-Host 'Validating IIS Default Document' -ForegroundColor Gray
    Check_IISDefaultDoc -ServerAddress $ServerAddress
@@ -53,10 +48,10 @@ if($WMIAvailable -eq "True"){
    Write-Host 'Validating IIS Directory Browsing' -ForegroundColor Gray
    Check_IISDirBrowsing -ServerAddress $ServerAddress
 
-   ## Check IIS HTTP Errors   
+   ## Check IIS HTTP Errors
    Write-Host 'Validating IIS HTTP Errors' -ForegroundColor Gray
    Check_IISHTTPErrors -ServerAddress $ServerAddress
-   
+
     ## Check IIS Static Content
    Write-Host 'Validating IIS Static Content' -ForegroundColor Gray
    Check_IISStaticContent -ServerAddress $ServerAddress
@@ -92,7 +87,7 @@ if($WMIAvailable -eq "True"){
     ## Check IIS .NET Extensibility 4.5
    Write-Host 'Validating IIS .NET Extensibility 4.5' -ForegroundColor Gray
    Check_IISNET45Extensibility -ServerAddress $ServerAddress
-   
+
     ## Check IIS ASP .NET 3.5
    Write-Host 'Validating IIS ASP .NET 3.5' -ForegroundColor Gray
    Check_IISASPNET35 -ServerAddress $ServerAddress
