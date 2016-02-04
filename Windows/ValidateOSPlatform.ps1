@@ -1,4 +1,4 @@
-## 20-01-2016 - img (initial version)
+﻿## 20-01-2016 - img (initial version)
 ## 
 ## Must be executed in a computer with serverManager module installed
 

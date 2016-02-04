@@ -1,4 +1,4 @@
-## 18-Jan-2016 - Initial version (img)
+﻿## 18-Jan-2016 - Initial version (img)
 ## Support for Windows Server 2008 and Windows Server 2012
 ## Must be updated whenever OS support for a new Windows OS is released
 ## Contains functions to get information about the mandatory requirements for the OutSystems Platform

@@ -1,11 +1,5 @@
-## 19-Jan-2016 - Initial version (img)
+﻿## 19-Jan-2016 - Initial version (img)
 ## Validate the pre-requirements for OutSystems Platform
-## Run this from a server with "ServerManager" module as Admin
-## 1.Open PowerShell as admin
-## 2.Execute .\PlatformRequirements.ps1 -ServerAddress "server_Address"
-##
-##
-## To execute on remote server the local user must also be admin on the local server
 
 
 ## As input the script requires the Address of the server you want to validate
