@@ -18,18 +18,18 @@ If($ServerAddress){
 $connection = Test-Connection -Quiet -ComputerName $ServerAddress
 
 If($connection){
-    ## Return true if success. $connection value is equal to true if provided credentials work 
+    ## Return true if success. $connection value is equal to true if provided credentials work
     Return $connection
 
 } Else {
     ## Failed to establish WMI connection, return an error mentioning that
-    return 'Unable to establish WMI connection to server. Make sure that server address is correct and it has WMI enabled.' 
+    return 'Unable to establish WMI connection to server. Make sure that server address is correct and it has WMI enabled.'
 
 }
 
 } Else {
     ## Missing mandatory fields
-    return 'Missing Server Address' 
+    return 'Missing Server Address'
 }
 }
 
@@ -50,23 +50,23 @@ $OSVersion = Get-WmiObject -ComputerName $ServerAddress -class Win32_OperatingSy
 if($OSVersion){
     ##Windows Server 2008
     If($OSVersion.caption -like '*Microsoft Windows Server 2008*'){
-       
+
         return $True
 
     ##Windows Server 2012
     } ElseIf($OSVersion.caption -like '*Microsoft Windows Server 2012*'){
-       
+
         return $True
-    
+
     }Else{
-       
+
         ##OS not suported
-        return 'Unsupported Windows Server version' 
+        return 'Unsupported Windows Server version'
     }
 
 } Else{
 
-    return 'Unable to get Operating System version' 
+    return 'Unable to get Operating System version'
 }
 
 } Else {
@@ -76,7 +76,7 @@ if($OSVersion){
 }
 
 ################################################
-## Function to check operating system version 
+## Function to check operating system version
 ################################################
 function Check_ServerOSVersion([string]$ServerAddress) {
 
@@ -90,16 +90,16 @@ $OSVersion = Get-WmiObject -ComputerName $ServerAddress -class Win32_OperatingSy
 if($OSVersion -eq "True"){
     ##Windows Server 2008
     If($OSVersion.caption -like '*Microsoft Windows Server 2008*'){
-       
+
         return '2008'
 
     ##Windows Server 2012
     } ElseIf($OSVersion.caption -like '*Microsoft Windows Server 2012*'){
-       
+
         return '2012'
-    
+
     }Else{
-       
+
         ##OS not suported
         return 'Operating System not suported'
     }
@@ -117,7 +117,7 @@ if($OSVersion -eq "True"){
 
 
 ###########################################################
-## function to check if .NET Framework 4.5 is already installed. Returns .NET framework version 
+## function to check if .NET Framework 4.5 is already installed. Returns .NET framework version
 ###########################################################
 function Check_NETFramework45([string]$ServerAddress){
 
@@ -127,14 +127,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 ##Same code for Windows Server 2008 and 2012
-if($OSVersion -eq "True"){  
-    
+if($OSVersion -eq "True"){
+
     #Reg Key of .NET Framework 4.5
     $NET45Directory = 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full'
 
     if (Test-Path $NET45Directory) {
     #Return .NET Framework 4 version. If not installed it doesn't return anything (empty)
-    ##Based on https://gist.github.com/drmohundro/40244009b2f4f32b258b 
+    ##Based on https://gist.github.com/drmohundro/40244009b2f4f32b258b
     $NETVersion = Get-ItemProperty $NET45Directory -name Version | select -expand Version
     Write-Host '.NET Framework 4.5 Version: '$NETVersion -ForegroundColor Green
 } Else {
@@ -150,9 +150,9 @@ if($OSVersion -eq "True"){
 }
 
   }  Else {
-        
+
         Write-Host 'Missing mandatory input parameters' -ForegroundColor Red
-    
+
     }
     }
 
@@ -161,7 +161,7 @@ if($OSVersion -eq "True"){
 
 
 ###########################################################
-## function to check if .NET Framework 3.5 is already installed. Returns .NET framework version 
+## function to check if .NET Framework 3.5 is already installed. Returns .NET framework version
 ###########################################################
 function Check_NETFramework35([string]$ServerAddress){
 
@@ -171,14 +171,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 ##Same code for Windows Server 2008 and 2012
-if($OSVersion -eq "True"){  
-    
+if($OSVersion -eq "True"){
+
     #Reg Key of .NET Framework 3.5
     $NET35Directory = 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5'
 
     if (Test-Path $NET35Directory) {
     #Return .NET Framework 3.5 version. If not installed it doesn't return anything (empty)
-    ##Based on https://gist.github.com/drmohundro/40244009b2f4f32b258b 
+    ##Based on https://gist.github.com/drmohundro/40244009b2f4f32b258b
     $NETVersion = Get-ItemProperty $NET35Directory -name Version | select -expand Version
     Write-Host '.NET Framework 3.5 Version: '$NETVersion -ForegroundColor Green
 } Else {
@@ -193,9 +193,9 @@ if($OSVersion -eq "True"){
     Write-Host  $OSVersion -ForegroundColor Red
     }
     } Else {
-        
+
         Write-Host 'Missing mandatory input parameters' -ForegroundColor Red
-    
+
     }
 }
 
@@ -223,14 +223,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Application-Server"
     if($CheckInstalled.Installed){
         Write-Host 'Application Server Role is installed' -ForegroundColor Green
     } Else {
         Write-Host 'Application Server Role is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -252,11 +252,10 @@ function Check_RoleApplicationServerNET35Features([string]$ServerAddress){
 
 if($ServerAddress){
 
-
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $OSDetailedVersion = Check_ServerOSVersion -ServerAddress $ServerAddress
     if($OSDetailedVersion -eq "2008"){
         $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "NET-Framework"
@@ -265,7 +264,7 @@ if($OSVersion -eq "True"){
     } Else {
         Write-Host 'Application Server .NET 3.5 Framework Features is not installed ' -ForegroundColor Red
     }
-    
+
     }
     Elseif($OSDetailedVersion -eq "2012"){
             $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "NET-Framework-Features"
@@ -274,7 +273,7 @@ if($OSVersion -eq "True"){
     } Else {
         Write-Host 'Application Server .NET 3.5 Framework Features is not installed ' -ForegroundColor Red
     }
-    }  
+    }
 
 } Else {
 
@@ -298,14 +297,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-WebServer"
     if($CheckInstalled.Installed){
         Write-Host 'Web Server Role is installed' -ForegroundColor Green
     } Else {
         Write-Host 'Web Server Role is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
     Write-Host  $OSVersion -ForegroundColor Red
@@ -327,14 +326,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Default-Doc"
     if($CheckInstalled.Installed){
         Write-Host 'Web Server Server Default Document is installed' -ForegroundColor Green
     } Else {
         Write-Host 'Web Server Server Default Document is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -356,14 +355,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Dir-Browsing"
     if($CheckInstalled.Installed){
         Write-Host 'Web Server Server Directory Browsing is installed' -ForegroundColor Green
     } Else {
         Write-Host 'Web Server Server Directory Browsing is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -386,14 +385,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Http-Errors"
     if($CheckInstalled.Installed){
         Write-Host 'Web Server Server HTTP Errors is installed' -ForegroundColor Green
     } Else {
         Write-Host 'Web Server Server HTTP Errors is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -416,14 +415,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Static-Content"
     if($CheckInstalled.Installed){
        Write-Host 'Web Server Server Static Content is installed' -ForegroundColor Green
     } Else {
        Write-Host 'Web Server Server Static Content is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -446,14 +445,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Http-Logging"
     if($CheckInstalled.Installed){
        Write-Host 'Web Server Server HTTP Logging is installed' -ForegroundColor Green
     } Else {
        Write-Host 'Web Server Server HTTP Logging is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -476,14 +475,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Request-Monitor"
     if($CheckInstalled.Installed){
        Write-Host 'Web Server Server Request Monitor is installed' -ForegroundColor Green
     } Else {
        Write-Host 'Web Server Server Request Monitor is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -506,14 +505,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Stat-Compression"
     if($CheckInstalled.Installed){
         Write-Host 'Web Server Server Static Compression is installed' -ForegroundColor Green
     } Else {
         Write-Host 'Web Server Server Static Compression is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -536,14 +535,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Dyn-Compression"
     if($CheckInstalled.Installed){
         Write-Host 'Web Server Server Dynamic Compression is installed' -ForegroundColor Green
     } Else {
         Write-Host 'Web Server Server Dynamic Compression is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -566,14 +565,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Filtering"
     if($CheckInstalled.Installed){
         Write-Host 'Web Server Server Web Filtering is installed' -ForegroundColor Green
     } Else {
         Write-Host 'Web Server Server Web Filtering is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -597,14 +596,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Windows-Auth"
     if($CheckInstalled.Installed){
         Write-Host 'Web Server Server Windows Authentication is installed' -ForegroundColor Green
     } Else {
         Write-Host 'Web Server Server Windows Authentication is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -628,14 +627,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Net-Ext"
     if($CheckInstalled.Installed){
         Write-Host 'Web Server Server .NET 3.5 Extensibility is installed' -ForegroundColor Green
     } Else {
         Write-Host 'Web Server Server .NET 3.5 Extensibility is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -658,14 +657,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Net-Ext45"
     if($CheckInstalled.Installed){
          Write-Host 'Web Server Server .NET 4.5 Extensibility is installed' -ForegroundColor Green
     } Else {
          Write-Host 'Web Server Server .NET 4.5 Extensibility is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -688,14 +687,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Asp-Net"
     if($CheckInstalled.Installed){
          Write-Host 'Web Server Server ASP .NET 3.5 is installed' -ForegroundColor Green
     } Else {
         Write-Host 'Web Server Server ASP .NET 3.5 is installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -718,14 +717,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Asp-Net45"
     if($CheckInstalled.Installed){
          Write-Host 'Web Server Server ASP .NET 4.5 is installed' -ForegroundColor Green
     } Else {
          Write-Host 'Web Server Server ASP .NET 4.5 is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -748,14 +747,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-ISAPI-Ext"
     if($CheckInstalled.Installed){
          Write-Host 'Web Server Server .ISAPI Extensions is installed' -ForegroundColor Green
     } Else {
          Write-Host 'Web Server Server ISAPI Extensions is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -778,14 +777,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-ISAPI-Filter"
     if($CheckInstalled.Installed){
          Write-Host 'Web Server Server ISAPI Filters is installed' -ForegroundColor Green
     } Else {
          Write-Host 'Web Server Server ISAPI Filters is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -808,14 +807,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Mgmt-Tools"
     if($CheckInstalled.Installed){
          Write-Host 'Web Server Server Management Console is installed' -ForegroundColor Green
     } Else {
          Write-Host 'Web Server Server Management Console is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -838,14 +837,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "Web-Metabase"
     if($CheckInstalled.Installed){
          Write-Host 'Web Server Server IIS 6 Management Compability is installed' -ForegroundColor Green
     } Else {
          Write-Host 'Web Server Server IIS 6 Management Compability is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -869,14 +868,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "MSMQ-Server"
     if($CheckInstalled.Installed){
         Write-Host 'Message Queue Server is installed' -ForegroundColor Green
     } Else {
          Write-Host 'Message Queue Server is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -892,7 +891,7 @@ if($OSVersion -eq "True"){
 
 
 ###########################################################
-## Check WAS 
+## Check WAS
 ###########################################################
 function Check_WAS([string]$ServerAddress){
 if($ServerAddress){
@@ -901,14 +900,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "WAS"
     if($CheckInstalled.Installed){
         Write-Host 'Windows Process Activation Service is installed' -ForegroundColor Green
     } Else {
          Write-Host 'Windows Process Activation Service is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -931,14 +930,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "WAS-Process-Model"
     if($CheckInstalled.Installed){
         Write-Host 'WAS Process Model is installed' -ForegroundColor Green
     } Else {
          Write-Host 'WAS Process Model is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -961,14 +960,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "WAS-NET-Environment"
     if($CheckInstalled.Installed){
         Write-Host 'WAS .NET Environment is installed' -ForegroundColor Green
     } Else {
          Write-Host 'WAS .NET Environment is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -991,14 +990,14 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
     $CheckInstalled = Check_GenericWMIQuery -ServerAddress $ServerAddress -WMIObjectName "WAS-Config-APIs"
     if($CheckInstalled.Installed){
         Write-Host 'WAS Configuration APIs is installed' -ForegroundColor Green
     } Else {
         Write-Host 'WAS Configuration APIs is not installed' -ForegroundColor Red
     }
-    
+
 
 } Else {
 
@@ -1020,33 +1019,33 @@ if($ServerAddress){
 $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 
 if($OSVersion -eq "True"){
-    
+
    ## Get reg key value
    $AlwaysWithoutDS = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\MSMQ\Parameters\Setup\" | Select-Object -ExpandProperty "AlwaysWithoutDS"
-   
+
    ## Reg key it's not null or empty(0)
    if($AlwaysWithoutDS){
-   
+
    ## Recommended value
    if($AlwaysWithoutDS -eq "1"){
-   
+
    Write-Host 'AlwaysWithoutDS Value:'$AlwaysWithoutDS -ForegroundColor Green
-   
+
    } Else {
-   
+
    Write-Host 'AlwaysWithoutDS Value:'$AlwaysWithoutDS -ForegroundColor Red
-   
+
    }
 
-   ## 0 = Empty 
+   ## 0 = Empty
    } ElseIf($AlwaysWithoutDS -eq "0"){
    Write-Host 'AlwaysWithoutDS Value '$AlwaysWithoutDS -ForegroundColor Red
    ## Reg Key doesn't exist
    } Else {
     Write-Host 'AlwaysWithoutDS registry key does not exist' -ForegroundColor Red
-    
+
    }
-   
+
 
 } Else {
 
