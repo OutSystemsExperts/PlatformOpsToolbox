@@ -23,7 +23,7 @@ If($connection){
 
 } Else {
     ## Failed to establish WMI connection, return an error mentioning that
-    return 'Unable to establish WMI connection to server $ServerAddress Make sure that server address is correct and it has WMI enabled.' 
+    return 'Unable to establish WMI connection to server. Make sure that server address is correct and it has WMI enabled.' 
 
 }
 
