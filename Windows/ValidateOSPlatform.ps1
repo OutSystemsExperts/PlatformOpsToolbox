@@ -1,6 +1,6 @@
-## 20-01-2016 - img
-## Execute against local server
+## 20-01-2016 - img (initial version)
 ## 
+## Must be executed in a computer with serverManager module installed
 
 <#
 Must be executed executed as administrator
