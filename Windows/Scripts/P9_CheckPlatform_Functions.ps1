@@ -130,14 +130,14 @@ $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 ##Same code for Windows Server 2008 and 2012
 if($OSVersion -eq "True"){
 
-    #Reg Key of .NET Framework 4.5
-    $NET45Directory = 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full'
-
-    if (Test-Path $NET45Directory) {
     #Return .NET Framework 4 version. If not installed it doesn't return anything (empty)
     ##Based on https://gist.github.com/drmohundro/40244009b2f4f32b258b
-    $NETVersion = Invoke-Command -ComputerName $ServerAddress {Get-ItemProperty $NET45Directory -name Version | select -expand Version}
+    $NETVersion = Invoke-Command -ComputerName $ServerAddress {Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" -name Version | select -expand Version}
+
+    if ($NETVersion) {
+
     Write-Host '.NET Framework 4.5 Version: '$NETVersion -ForegroundColor Green
+
 } Else {
 
     #Returns False if not installed
@@ -157,10 +157,6 @@ if($OSVersion -eq "True"){
     }
     }
 
-
-
-
-
 ###########################################################
 ## function to check if .NET Framework 3.5 is already installed. Returns .NET framework version
 ###########################################################
@@ -174,14 +170,14 @@ $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 ##Same code for Windows Server 2008 and 2012
 if($OSVersion -eq "True"){
 
-    #Reg Key of .NET Framework 3.5
-    $NET35Directory = 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5'
-
-    if (Test-Path $NET35Directory) {
     #Return .NET Framework 3.5 version. If not installed it doesn't return anything (empty)
     ##Based on https://gist.github.com/drmohundro/40244009b2f4f32b258b
-    $NETVersion = Invoke-Command -ComputerName $ServerAddress {Get-ItemProperty $NET35Directory -name Version | select -expand Version}
+    $NETVersion = Invoke-Command -ComputerName $ServerAddress {Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" -name Version | select -expand Version}
+
+    if ($NETVersion) {
+
     Write-Host '.NET Framework 3.5 Version: '$NETVersion -ForegroundColor Green
+
 } Else {
 
     #Returns False if not installed
