@@ -136,7 +136,7 @@ if($OSVersion -eq "True"){
     if (Test-Path $NET45Directory) {
     #Return .NET Framework 4 version. If not installed it doesn't return anything (empty)
     ##Based on https://gist.github.com/drmohundro/40244009b2f4f32b258b
-    $NETVersion = Get-ItemProperty $NET45Directory -name Version | select -expand Version
+    $NETVersion = Invoke-Command -ComputerName $ServerAddress {Get-ItemProperty $NET45Directory -name Version | select -expand Version}
     Write-Host '.NET Framework 4.5 Version: '$NETVersion -ForegroundColor Green
 } Else {
 
@@ -180,7 +180,7 @@ if($OSVersion -eq "True"){
     if (Test-Path $NET35Directory) {
     #Return .NET Framework 3.5 version. If not installed it doesn't return anything (empty)
     ##Based on https://gist.github.com/drmohundro/40244009b2f4f32b258b
-    $NETVersion = Get-ItemProperty $NET35Directory -name Version | select -expand Version
+    $NETVersion = Invoke-Command -ComputerName $ServerAddress {Get-ItemProperty $NET35Directory -name Version | select -expand Version}
     Write-Host '.NET Framework 3.5 Version: '$NETVersion -ForegroundColor Green
 } Else {
 
@@ -1023,7 +1023,7 @@ $OSVersion = Check_ISServerOSVersionSupported -ServerAddress $ServerAddress
 if($OSVersion -eq "True"){
 
    ## Get reg key value
-   $AlwaysWithoutDS = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\MSMQ\Parameters\Setup\" | Select-Object -ExpandProperty "AlwaysWithoutDS"
+   $AlwaysWithoutDS = Invoke-Command -ComputerName $ServerAddress {Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\MSMQ\Parameters\Setup\" | Select-Object -ExpandProperty "AlwaysWithoutDS"}
 
    ## Reg key it's not null or empty(0)
    if($AlwaysWithoutDS){
