@@ -12,8 +12,13 @@ Instructions
 3. Execute .\ValidateOSPlatform.ps1
 #>
 
+Param(
+[Parameter(Mandatory=$True)]
+[string]$ServerAddress
+)
+
 ## import analyzer script
-. ".\Scripts\P9_PlatformRequirementsAnalyzer.ps1" -ServerAddress "localhost"
+. ".\Scripts\P9_PlatformRequirementsAnalyzer.ps1" -ServerAddress $ServerAddress
 
 ## Execute validation function
 StartValidation
