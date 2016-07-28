@@ -2,6 +2,16 @@
 ## PC - OutSystems Platform Operations, June 2016
 ## We assume you have unrestricted access to the internet and/or repositories needed.
 
+# Check for user privileges to run this tool as well as the configuration tool
+if [[ $(id -u) -ne 0 ]] ;
+  then echo "Please run this script as root or with an authorized sudo"
+		exit 8
+  else echo "You are running this script as an authorized user."
+	sleep 1
+fi
+
+
+
 # Get OS Type and version number. This will be used to define the installables path later on.
 if [ -f /usr/bin/lsb_release];
 	then
