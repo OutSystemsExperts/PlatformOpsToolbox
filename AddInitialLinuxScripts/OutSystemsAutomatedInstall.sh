@@ -1,6 +1,6 @@
 #!/bin/bash
 ## PC - OutSystems Platform Operations, June 2016
-## For now we're assuming the customer has total access to the internet and/or repositories needed.
+## We assume you have unrestricted access to the internet and/or repositories needed.
 
 # Get OS Type and version number. This will be used to define the installables path later on.
 if [ -f /usr/bin/lsb_release];
