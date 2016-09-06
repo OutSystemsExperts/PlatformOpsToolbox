@@ -13,11 +13,7 @@
 ## RED style="color:#A93226"
 ## YELLOW style="color:#F1C40F"
 ## GRAY style="color:#AAB7B8"
-### COLOR CODES USED
-## GREEN style="color:#1E8449"
-## RED style="color:#A93226"
-## YELLOW style="color:#F1C40F"
-## GRAY style="color:#AAB7B8"
+
 
 ## Initiate outputs
 ## TXT:
@@ -25,7 +21,7 @@ touch validator_$(hostname -s).txt
 echo "" > validator_$(hostname -s).txt
 
 ### HTML Report in
-HTMLREP="/tmp/validator_$(hostname -s).html"
+HTMLREP="validator_$(hostname -s).html"
 
 echo -e "\n\n\n\t Welcome to the OutSystems Platform installation validator.\n
   \t This will generate a "validator.html" and a "validator_$(hostname -s).txt" report file in the same folder you are running this script.
@@ -292,9 +288,11 @@ fi
 ### If the CompilerServerHostname is defined to localhost, 127.0.0.1, `hostname -i` or `hostname -s`, then the CONTROLLER service in should be ENABLED.
 TESTING="OutSystems Platform Server Depoloyment Controller Configuration."
 
+### Option A was to define the possibilities as variables
+##### Opted to ask directly in the case.
 #compiler_value=$(awk -F '[<>]' '/CompilerServerHostname/{print $3}' /etc/outsystems/server.hsconf )
-#shorthost=`hostname -s`
-#hostip=`hostname -i`
+#shorthost=$(hostname -s)
+#hostip=$(hostname -i)
 #controller_enabled=$(grep -c -w CONTROLLER=\"ENABLED\" /etc/outsystems/os.services.conf)
 
 case $(awk -F '[<>]' '/CompilerServerHostname/{print $3}' /etc/outsystems/server.hsconf ) in
@@ -345,9 +343,10 @@ for i in $(cat /etc/sysconfig/outsystems | awk -F\= '{print $1}' | grep -v SUCOM
 	fi
 done
 
-
 #### Testing Service Center Reachability (locally)
-TESTING="Is Service Center reachable localy?"
+printhtml_single "Check for HTTP access to the Service Center"
+printstdout_title "Check for HTTP access to the Service Center"
+TESTING="Is Service Center reachable?"
 case $(curl --silent localhost/ServiceCenter/_ping.jsf | grep -c running) in
 	1 ) RESULT="Reachable on localhost/ServiceCenter"
 		RESULT2="<td style="color:#1E8449">Reachable on localhost/ServiceCenter</td>"
@@ -359,10 +358,6 @@ case $(curl --silent localhost/ServiceCenter/_ping.jsf | grep -c running) in
 esac
 printstdout
 printhtml
-
-	
-
-
 
 ### Stop HTML page
 ##
