@@ -3,6 +3,7 @@
 ## We assume you have unrestricted access to the internet and/or repositories needed.
 
 # Check for user privileges to run this tool as well as the configuration tool
+
 if [[ $(id -u) -ne 0 ]] ;
   then echo "Please run this script as root or with an authorized sudo"
 		exit 8
@@ -10,10 +11,8 @@ if [[ $(id -u) -ne 0 ]] ;
 	sleep 1
 fi
 
-
-
-# Get OS Type and version number. This will be used to define the installables path later on.
-if [ -f /usr/bin/lsb_release];
+# Get Op System Type and version number. This will be used to define the installables path later on.
+if [[ -f /usr/bin/lsb_release ]] ;
 	then
 		OSREL=$(lsb_release -s -i)
 		OSMAJVER=$(lsb_release -s -r)
@@ -21,7 +20,7 @@ if [ -f /usr/bin/lsb_release];
 		OSREL=$(cat /etc/redhat-release | cut -d' ' -f1)
 		OSMAJVER=$(cat /etc/redhat-release | cut -d' ' -f3)
 fi
-	
+
 
 echo "You are running on ${OSREL}, version ${OSMAJVER}."
 
@@ -32,7 +31,9 @@ OSVER=$(echo $OSMAJVER | cut -d '.' -f1)
 echo "The installables path for your OS and Version is installables/${OSREL}/${OSVER} "
 instpath=installables/${OSREL}/${OSVER}
 
-
+######################################################
+############# Starting Functions block ###############
+######################################################
 
 # Function Global: Check Return codes
 returncode () {
@@ -209,6 +210,12 @@ do
 done
 
 }
+
+######################################################
+############# Ending Functions block ###############
+######################################################
+
+
 
 # Step 1 : install dependencies
 instdep
