@@ -297,9 +297,11 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Net-Ext"}
   if($CheckInstalled.Installed)
   {
+    Write-Host 'Web Server Server .NET 3.5 Extensibility is installed' "`n" -ForegroundColor Green | tee-object –FilePath "c:\temp\teste2.htm"
   }
   Else
   {
+    Write-Host 'Web Server Server .NET 3.5 Extensibility is not installed' "`n" -ForegroundColor Red
   }
 
   # IIS feature .NET Extensibility 4.5
@@ -307,9 +309,11 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Net-Ext45"}
   if($CheckInstalled.Installed)
   {
+    Write-Host 'Web Server Server .NET 4.5 Extensibility is installed' "`n" -ForegroundColor Green | tee-object –FilePath "c:\temp\teste2.htm"
   }
   Else
   {
+    Write-Host 'Web Server Server .NET 4.5 Extensibility is not installed' "`n" -ForegroundColor Red
   }
 
   # IIS feature ASP .NET 3.5
@@ -317,9 +321,11 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Asp-Net"}
   if($CheckInstalled.Installed)
   {
+    Write-Host 'Web Server Server ASP .NET 3.5 is installed' "`n" -ForegroundColor Green
   }
   Else
   {
+    Write-Host 'Web Server Server ASP .NET 3.5 is installed' "`n" -ForegroundColor Red
   }
 
   # IIS feature ASP .NET 4.5
@@ -327,9 +333,11 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Asp-Net45"}
   if($CheckInstalled.Installed)
   {
+    Write-Host 'Web Server Server ASP .NET 4.5 is installed' "`n" -ForegroundColor Green 
   }
   Else
   {
+    Write-Host 'Web Server Server ASP .NET 4.5 is installed' "`n" -ForegroundColor Red
   }
 
   # IIS feature ISAPI Extensions
@@ -337,18 +345,23 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-ISAPI-Ext"}
   if($CheckInstalled.Installed)
   {
+    Write-Host 'Web Server Server .ISAPI Extensions is installed' "`n" -ForegroundColor Green 
   }
   Else
   {
+    Write-Host 'Web Server Server ISAPI Extensions is not installed' "`n" -ForegroundColor Red
   }
 
   # IIS ISAPI Filter
+  Write-Host "Validating IIS ISAPI Filter" -ForegroundColor Gray
   $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-ISAPI-Filter"}
   if($CheckInstalled.Installed)
   {
+    Write-Host 'Web Server Server ISAPI Filters is installed' "`n" -ForegroundColor Green 
   }
   Else
   {
+    Write-Host 'Web Server Server ISAPI Filters is not installed' "`n" -ForegroundColor Red
   }
 
   # IIS feature Management Console
@@ -356,8 +369,10 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Mgmt-Tools"}
   if($CheckInstalled.Installed)
   {
+    Write-Host 'Web Server Server Management Console is installed' "`n" -ForegroundColor Green 
   }Else
   {
+    Write-Host 'Web Server Server Management Console is not installed' "`n" -ForegroundColor Red
   }
 
   # IIS feature Metabase Compatibility
@@ -365,9 +380,11 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Metabase"}
   if($CheckInstalled.Installed)
   {
+    Write-Host 'Web Server Server IIS 6 Management Compability is installed' "`n" -ForegroundColor Green
   }
   Else
   {
+    Write-Host 'Web Server Server IIS 6 Management Compability is not installed' "`n" -ForegroundColor Red
   }
 
   # WAS process model
@@ -375,9 +392,11 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "WAS-Process-Model"}
   if($CheckInstalled.Installed)
   {
+    Write-Host 'WAS Process Model is installed'  "`n" -ForegroundColor Green
   }
   Else
   {
+    Write-Host 'WAS Process Model is not installed' "`n" -ForegroundColor Red
   }
 
   # WAS .NET Environment
@@ -385,9 +404,11 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "WAS-NET-Environment"}
   if($CheckInstalled.Installed)
   {
+    Write-Host 'WAS .NET Environment is installed' "`n" -ForegroundColor Green 
   }
   Else
   {
+    Write-Host 'WAS .NET Environment is not installed'  "`n" -ForegroundColor Red
   }
 
   # WAS Configuration APIs
@@ -395,6 +416,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "WAS-Config-APIs"}
   if($CheckInstalled.Installed)
   {
+    Write-Host 'WAS Configuration APIs is installed' "`n" -ForegroundColor Green 
   }
   Else
   {
@@ -406,13 +428,16 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "MSMQ-Server"}
   if($CheckInstalled.Installed)
   {
+    Write-Host 'Message Queue Server is installed' "`n" -ForegroundColor Green
   }
   Else
   {
+    Write-Host 'Message Queue Server is not installed' "`n" -ForegroundColor Red
   }
 
   # Message queue server reg Key to never use domain controller servers
   Write-Host "Validating AlwaysWithouDS registry key value" -ForegroundColor Gray
+  $AlwaysWithoutDS = Invoke-Command -ComputerName $ComputerName {Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\MSMQ\Parameters\Setup\" | Select-Object -ExpandProperty "AlwaysWithoutDS"}
 
   # Reg key it's not null or empty(0)
   if($AlwaysWithoutDS)
@@ -431,13 +456,16 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   }
   ElseIf($AlwaysWithoutDS -eq "0")
   {
+    Write-Host 'AlwaysWithoutDS Value '$AlwaysWithoutDS  "`n"-ForegroundColor Red
   # Reg Key doesn't exist
   }
   Else
   {
+    Write-Host 'AlwaysWithoutDS registry key does not exist' "`n" -ForegroundColor Red
   }
 
 }
+
 # Unsupported Windows Server version
 else
 {
