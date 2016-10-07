@@ -3,7 +3,8 @@
 ## We assume you have unrestricted access to the internet and/or repositories needed.
 
 # Check for user privileges to run this tool as well as the configuration tool
-
+###		1.0.1 - Expert Services - Platform Operations - 07/10/2016 : Changed the repostory URL. Now you are installing OutSystems 10.0 !
+###				
 if [[ $(id -u) -ne 0 ]] ;
   then echo "Please run this script as root or with an authorized sudo"
 		exit 8
@@ -176,13 +177,13 @@ instoutsystems () {
 isrepothere=$(yum repolist | grep -i outsystems | cut -d' ' -f1)
 case $isrepothere in
 	outsystems) echo "Outsystems Repository is already present.";;
-	*) rpm -i http://yum.outsystems.net/9.1/noarch/outsystems-repo.rpm
-		returncode "Installation Outsystems Repo" ;;
+	*) rpm -i http://yum.outsystems.net/10.0/noarch/outsystems-repo.rpm
+		returncode "Installation Outsystems 10 Repo" ;;
 esac
 yum -y update
 returncode "Update Yum"
 yum -y install outsystems-agileplatform-wildfly8 outsystems-agileplatform outsystems-agileplatform-libs
-returncode "Installation Outsystems Platform and Libs"
+returncode "Installation Outsystems 10 and Libs"
 }
 
 # Function 9 : Get and Extract JCE 

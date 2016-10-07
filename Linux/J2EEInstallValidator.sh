@@ -7,7 +7,7 @@
 ###	Revision
 ###		0.1 - Paulo Costa - 26/08/2016
 ###				Initial version
-###		1.1 - Paulo Costa - 07/10/2016
+###		1.0.1 - Expert Services - Platform Operations - 07/10/2016 :
 ###				Added new header.
 ###					Oh, and also added an input so you can tell what OutSystems are you running: 9 or 10. Default now is 10.
 
