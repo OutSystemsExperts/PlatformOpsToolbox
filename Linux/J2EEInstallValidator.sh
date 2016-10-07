@@ -7,6 +7,9 @@
 ###	Revision
 ###		0.1 - Paulo Costa - 26/08/2016
 ###				Initial version
+###		1.1 - Paulo Costa - 07/10/2016
+###				Added new header.
+###					Oh, and also added an input so you can tell what OutSystems are you running: 9 or 10. Default now is 10.
 
 ### COLOR CODES USED
 ## GREEN style="color:#1E8449"
@@ -35,6 +38,18 @@ if [[ $(id -u) -ne 0 ]] ;
 fi
 
 
+########### Only input is here. What version are you running?
+tellmetheversion() {
+read -p "Type the version of your OutSystems Platform Server. 9.1 or 10.0? " plat_version
+case $plat_version in
+    9.1|10|10.0) echo "Setting Platform Version validation to $(plat_version)" ;;
+    *) echo "Please note that only version 9.1 or 10 are supported. Please type again the correct version."; tellmetheversion  ;;
+esac
+}
+
+tellmetheversion
+
+
 ### Start HTML page
 ##
 ### Print HTML Header
@@ -44,8 +59,18 @@ echo "<HTML>
 <TITLE>
 OutSystems Platform Installation Validator
 </TITLE>
-<IMG src=\"https://www.google.com/a/outsystems.com/images/logo.gif\" align=\"right\">
-</br></br></br></br></br></br></br><H1 style=\"font-family:verdana;text-align:center\"> OutSystems Platform Installation Validator</H1>
+
+<table style=\"height: 150px;border-collapse: collapse; border:0;\" width=\"100%\" >
+<tr>
+<td style=\"background-color: #570c0b;text-align: center;\"><img style=\"margin-right: 10px; margin-left: 10px;\" align=\"right\" src=\"http://www.outsystems.com/PortalTheme/img/NewOSLogoWhite.png?24752\" alt=\"\" width=\"185\" />
+</td>
+</tr>
+<tr>
+<td style=\"background-color: #570c0b;\"><h1 style=\"text-align: center; color: #ffffff; font-family: verdana\">Platform Installation Validator</h1>
+</td>
+</tr>
+</table>
+
 <P style=\"font-family:verdana;text-align:center\">For Linux Hosts and JBOSS/WildFly Application Servers.</P>
 <P style=\"font-family:verdana;text-align:center\">Validation on $(hostname -s)</P>
 </HEAD>
@@ -183,13 +208,33 @@ printstdout_title "OutSystems Packages Installation"
 
 ### Test how many outsystems RPM are installed.
 
-REPO=$(rpm -qa outsystems-repo* | wc -l)
-TESTING="OutSystems Repository on local RPMDB"
+REPO=$(rpm -qa outsystems-repo* |wc -l)
+REPOV=$(rpm -qa outsystems-repo*)
+TESTING="OutSystems Repository on local RPMDB?"
 case $REPO in
 	0)	RESULT="Cannot find OutSystems Repository in your local RPMDB"
 		RESULT2="<td style=\"color:#F1C40F\">Cannot find OutSystems Repository in your local RPMDB</td>";;
-	1) 	RESULT="OutSystems Repository is present"
-		RESULT2="<td style=\"color:#1E8449\">OutSystems Repository is present</td>";;
+	1) 	
+		case $plat_version in
+			9.1)	if [ $REPOV == outsystems-repo-9-1.noarch ]; then
+					RESULT="Correct OutSystems Repository is present."
+					RESULT2="<td style=\"color:#1E8449\">Correct OutSystems Repository is present</td>"
+				else
+					RESULT="Wrong Outsystems Repository present in your RPMDB."
+                                        RESULT2="<td style=\"color:#F1C40F\">Wrong Outsystems Repository present in your RPMDB.</td>"
+				fi
+				;;
+
+			10|10.0)	if [ $REPOV == outsystems-repo-10-0.noarch ]; then
+                                        RESULT="Correct OutSystems Repository is present."
+                                        RESULT2="<td style=\"color:#1E8449\">Correct OutSystems Repository is present</td>"
+                                else
+                                        RESULT="Wrong Outsystems Repository present in your RPMDB."
+                                        RESULT2="<td style=\"color:#F1C40F\">Wrong Outsystems Repository present in your RPMDB.</td>"
+                                fi
+                                ;;
+		esac
+	;;
 esac
 printstdout
 printhtml
@@ -382,3 +427,4 @@ printhtml
 ##
 echo "</table>
 </BODY>" >> "$HTMLREP"
+
