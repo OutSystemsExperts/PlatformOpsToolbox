@@ -1,10 +1,10 @@
-﻿
-
-# Parameter computer name
+﻿# Parameter computer name
 Param(
 [string]$ComputerName
 )
 
+
+$PlatformVersion = Read-Host -Prompt 'Please type the version of OutSystems installation you are validating the requirements for'
 
 
 # Auxiliary variables
@@ -120,6 +120,39 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   else{
     Write-Host ".NET Framework 4.5 is not installed" "`n" -ForegroundColor Red  
   }
+
+
+
+  if ($PlatformVersion -like "10*" )
+  {
+    Write-Host "Validating .NET Framework 4.6" -ForegroundColor Gray  
+    $NET46Version = Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP' -recurse |
+    Get-ItemProperty -name Version,Release -EA 0 |
+    Where { $_.PSChildName -match '^(?!S)\p{L}'} |
+    Select PSChildName, Version, Release, @{
+      name="Product"
+      expression={
+        switch -regex ($_.Release) {
+          "378675|378758" { [Version]"4.5.1" }
+          "379893" { [Version]"4.5.2" }
+          "393295|393297" { [Version]"4.6" }
+          "394254|394271" { [Version]"4.6.1" }
+          "394802|394806" { [Version]"4.6.2" }
+          {$_ -gt 394806} { [Version]"Undocumented 4.6.2 or higher, please update script" }
+        }
+      }
+    }
+ 
+    if ($NET46Version -Match "4.6.1" -or $NET46Version -Match "4.6.2")
+    {
+        write-host ".NET Framework 4.6.1 version or superior is installed" "`n" -ForegroundColor Green
+    }
+    else
+    { 
+        write-host ".NET Framework 4.6.1 version or superior is not installed" "`n" -ForegroundColor Red  
+    }
+  }
+  
 
   # Application Server role (Windows Features)
   Write-Host "Validating Application Server role" -ForegroundColor Gray  
@@ -435,6 +468,22 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
     Write-Host 'Message Queue Server is not installed' "`n" -ForegroundColor Red
   }
 
+
+  # Confirm that FIPS Compliant Algorithms are disabled
+  Write-Host "Validating that FIPS Compliant Algorithms are disabled" -ForegroundColor Gray
+  $FIPS = Invoke-Command -ComputerName $ComputerName {Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy\" | Select-Object -ExpandProperty "Enabled"}
+  # Recommended value = 0
+  if($FIPS -eq "0")
+  {
+    Write-Host 'FIPS Compliant Algorithms are disabled'"`n" -ForegroundColor Green
+  }
+  Else
+  {
+    Write-Host 'FIPS Compliant Algorithms are still enabled'"`n" -ForegroundColor Red
+  }
+
+
+
   # Message queue server reg Key to never use domain controller servers
   Write-Host "Validating AlwaysWithouDS registry key value" -ForegroundColor Gray
   $AlwaysWithoutDS = Invoke-Command -ComputerName $ComputerName {Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\MSMQ\Parameters\Setup\" | Select-Object -ExpandProperty "AlwaysWithoutDS"}
@@ -446,11 +495,11 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
     # Recommended value
     if($AlwaysWithoutDS -eq "1")
     {
-      Write-Host 'AlwaysWithoutDS Value:'$AlwaysWithoutDS -ForegroundColor Green
+      Write-Host 'AlwaysWithoutDS Value is correct:'$AlwaysWithoutDS -ForegroundColor Green
     }
     Else
     {
-      Write-Host 'AlwaysWithoutDS Value:'$AlwaysWithoutDS -ForegroundColor Red
+      Write-Host 'AlwaysWithoutDS Value is not correct:'$AlwaysWithoutDS -ForegroundColor Red
     }
   # 0 = Empty
   }
