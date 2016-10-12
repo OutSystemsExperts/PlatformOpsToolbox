@@ -1,0 +1,10 @@
+Windows Registry Editor Version 5.00
+
+;
+; Set Windows registry keys to disable FIPS Compliant Algorithms
+; OutSystems Expert Services
+; 2016-10
+;
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy]
+"Enabled"=dword:00000000
