@@ -61,7 +61,7 @@ MainMenu
  switch ($selectedMain)
  {
      '1' {
-         'You chose to validate the requirements described in the pre-installation block of the ÔutSystems Installation Checklist'
+         'You chose to validate the requirements described in the pre-installation block of the OutSystems Installation Checklist'
          & $ValidatorDir\installValidator.ps1 ; exit
          
      } '2' {
