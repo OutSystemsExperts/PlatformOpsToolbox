@@ -6,11 +6,13 @@ Param(
 $title = "OutSystems Version"
 $message = "Please select the version of OutSystems installation you are validating the requirements for"
 
-$two = New-Object System.Management.Automation.Host.ChoiceDescription "&9.1", `
-    "Version 9.1"
 
 $one = New-Object System.Management.Automation.Host.ChoiceDescription "&10", `
     "Version 10"
+
+$two = New-Object System.Management.Automation.Host.ChoiceDescription "&9.1", `
+    "Version 9.1"
+    
 
 $options = [System.Management.Automation.Host.ChoiceDescription[]]($one, $two)
 
@@ -18,10 +20,11 @@ $result = $host.ui.PromptForChoice($title, $message, $options, 0)
 
 switch ($result)
     {
-        0 {"You selected version 10" ; $PlatformVersion = 9} 
-        1 {"You selected version 9.1" ; $PlatformVersion = 10}
+        0 {$PlatformVersion = "10" ; "You selected version 10" } 
+        1 {$PlatformVersion = "9.1" ; "You selected version 9.1"}
     }
 	
+write-host $PlatformVersion
 	
 # Auxiliary variables
 $minimumRAM = 4
@@ -139,7 +142,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
 
 
-  if ($PlatformVersion -like "10*" )
+  if ($PlatformVersion -eq "10" )
   {
     Write-Host "Validating .NET Framework 4.6" -ForegroundColor Gray  
     $NET46Version = Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP' -recurse |
