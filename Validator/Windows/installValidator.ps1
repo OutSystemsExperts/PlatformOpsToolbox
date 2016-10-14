@@ -24,7 +24,7 @@ switch ($result)
         1 {$PlatformVersion = "9.1" ; "You selected version 9.1"}
     }
 	
-write-host $PlatformVersion
+# this was a dummy test :) - write-host $PlatformVersion
 	
 # Auxiliary variables
 $minimumRAM = 4
