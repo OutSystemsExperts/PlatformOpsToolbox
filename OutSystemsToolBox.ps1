@@ -1,9 +1,19 @@
-﻿if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
+if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
  
- $MainDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$MainDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ToolsDir  = Join-Path -Path $MainDir -ChildPath \Tools\Windows
 $ValidatorDir  = Join-Path -Path $MainDir -ChildPath \Validator\Windows
 $ToolsDir  = Join-Path -Path $MainDir -ChildPath \Install\Windows
+
+
+function exitCode
+{
+  if($?) {            
+  Write-Host "The last command executed successfully"            
+  } else {            
+  write-host "The last command failed"            
+  }
+}
 
 
 function MainMenu
@@ -52,9 +62,11 @@ MainMenu
  {
      '1' {
          'You chose to validate the requirements described in the pre-installation block of the ÔutSystems Installation Checklist'
-         & $ValidatorDir\installValidator.ps1
+         & $ValidatorDir\installValidator.ps1 ; exit
+         
      } '2' {
          ToolsMenu
+         
      } '3' {
          'You chose to quit #3'
      } 'q' {
@@ -64,24 +76,30 @@ MainMenu
 
 
  ToolsMenu
- $selectedTools = Read-Host "Please type your selection"
- switch ($selectedTools)
- {
-     '1' {
-         'You chose to disable SSLv3'
-         regedit /s $ToolsDir\DisableSSLv3.reg
-     } '2' {
-         'You chose to disable FIPS Compliant Algorithms'
-         ## Were we will list the available tools and invoke them accordingly.
-         regedit /s $ToolsDir\DisableFIPS.reg
-     } '3' {
-         'You chose to set ""MSMQ AlwaysWithoutDS"" to 1'
-         regedit /s $ToolsDir\SetMSMQAlwaysWithoutDS.reg
-#### Need to work on the innermenu before calling this one
-#     } '0' {
-#         'Going back to the Main Menu'
-#         MainMenu
-     } 'q' {
-         return
-     }
- }
+         $selectedTools = Read-Host "Please type your selection"
+         switch ($selectedTools)
+         {
+             '1' {
+                 'You chose to disable SSLv3'
+                   & regedit /s $ToolsDir\DisableSSLv3.reg
+                   exitCode
+                   Read-Host 'Press enter to exit'
+              } '2' {
+                  'You chose to disable FIPS Compliant Algorithms'
+                  ## Were we will list the available tools and invoke them accordingly.
+                  & regedit /s $ToolsDir\DisableFIPS.reg
+                  exitCode
+                  Read-Host 'Press enter to exit'
+              } '3' {
+                  'You chose to set ""MSMQ AlwaysWithoutDS"" to 1'
+                  & regedit /s $ToolsDir\SetMSMQAlwaysWithoutDS.reg
+                  exitCode
+                  Read-Host 'Press enter to exit'
+         #### Need to work on the innermenu before calling this one
+         #     } '0' {
+         #         'Going back to the Main Menu'
+         #         MainMenu
+              } 'q' {
+                  return
+              }
+        }
