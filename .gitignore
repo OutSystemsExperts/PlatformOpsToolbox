@@ -214,3 +214,5 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+GUIOutSystemsToolBox.ps1
+OutSystemsToolBox_simple_menu.ps1
