@@ -1,4 +1,6 @@
-﻿$MainDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+﻿if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
+ 
+ $MainDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ToolsDir  = Join-Path -Path $MainDir -ChildPath \Tools\Windows
 $ValidatorDir  = Join-Path -Path $MainDir -ChildPath \Validator\Windows
 $ToolsDir  = Join-Path -Path $MainDir -ChildPath \Install\Windows
