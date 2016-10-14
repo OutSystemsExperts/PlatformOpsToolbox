@@ -526,3 +526,4 @@ else
 {
   Write-Host "Unable to establish WMI connection to server. Make sure that computer name is correct and it has WMI enabled."
 }
+Read-Host -Prompt 'Press any key to exit the validator and close this window'
