@@ -1,0 +1,10 @@
+Windows Registry Editor Version 5.00
+
+;
+; Set Windows registry keys to instruct MSMQ to never join a MSMQ domain server (always be local)
+; OutSystems Expert Services
+; 2015-12
+;
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSMQ\Parameters\Setup]
+"AlwaysWithoutDS"=dword:00000001
