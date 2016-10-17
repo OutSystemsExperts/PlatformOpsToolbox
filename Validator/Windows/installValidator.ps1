@@ -27,7 +27,7 @@ switch ($result)
 # this was a dummy test :) - write-host $PlatformVersion
 	
 # Auxiliary variables
-$minimumRAM = 4
+$minimumRAM = 4294967296
 $minimumCPUCores = 2
 
 
@@ -71,7 +71,7 @@ else
 }
 
 # Validate physical memory
-if($("{0:F0}" -f $($hardwareSpecs.TotalPhysicalMemory/1GB)) -lt $minimumRAM)
+if($($hardwareSpecs.TotalPhysicalMemory) -lt $minimumRAM)
 {
   Write-Host "Available RAM memory doesn't meet the minimum requirements"`n"" -ForegroundColor Red
 
