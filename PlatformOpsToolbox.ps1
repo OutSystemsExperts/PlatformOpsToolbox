@@ -1,17 +1,17 @@
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
- 
+
 $MainDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ToolsDir  = Join-Path -Path $MainDir -ChildPath \Tools\Windows
-$ValidatorDir  = Join-Path -Path $MainDir -ChildPath \Validator\Windows
-$ToolsDir  = Join-Path -Path $MainDir -ChildPath \Install\Windows
+$ToolsDir  = Join-Path -Path $MainDir -ChildPath \MiscScripts\Windows
+$ValidatorDir  = Join-Path -Path $MainDir -ChildPath \InstallationValidator\Windows
+$ToolsDir  = Join-Path -Path $MainDir -ChildPath \AutomaticInstaller\Windows
 
 
 function exitCode
 {
-  if($?) {            
-  Write-Host "The last command executed successfully"            
-  } else {            
-  write-host "The last command failed"            
+  if($?) {
+  Write-Host "The last command executed successfully"
+  } else {
+  write-host "The last command failed"
   }
 }
 
@@ -63,10 +63,10 @@ MainMenu
      '1' {
          'You chose to validate the requirements described in the pre-installation block of the OutSystems Installation Checklist'
          & $ValidatorDir\installValidator.ps1 ; exit
-         
+
      } '2' {
          ToolsMenu
-         
+
      } '3' {
          'You chose to quit #3'
      } 'q' {
