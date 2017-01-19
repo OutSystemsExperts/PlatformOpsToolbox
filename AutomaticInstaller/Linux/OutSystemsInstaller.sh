@@ -121,15 +121,15 @@ service iptables save
 
 # Function 5 : Prepare ANT package
 prepANT () {
-if [ -f apache-ant-1.9.7-bin.zip ];
+if [ -f apache-ant-1.9.8-bin.zip ];
 then
-	echo "apache-ant-1.9.7-bin.zip exists in folder, will not re-download."
+	echo "apache-ant-1.9.8-bin.zip exists in folder, will not re-download."
 else
-	echo "I will now download apache-ant-1.9.7-bin.zip"
-	wget http://mirror.catn.com/pub/apache//ant/binaries/apache-ant-1.9.7-bin.zip
+	echo "I will now download apache-ant-1.9.8-bin.zip"
+	wget http://mirror.catn.com/pub/apache//ant/binaries/apache-ant-1.9.8-bin.zip
 	returncode "Download of ANT"
 fi
-unzip -o apache-ant-1.9.7-bin.zip -d /opt/
+unzip -o apache-ant-1.9.8-bin.zip -d /opt/
 returncode "Unzip ANT to target folder"
 
 }
@@ -202,7 +202,7 @@ returncode "Placing JCE in the target outsystems platform folder"
 
 # Function 10 : Take out the trash
 cleanitall () {
-for downed in apache-ant-1.9.7-bin.zip jdk-8u102-linux-x64.rpm wildfly-8.2.0.Final.zip jce_policy-8.zip
+for downed in apache-ant-1.9.8-bin.zip jdk-8u102-linux-x64.rpm wildfly-8.2.0.Final.zip jce_policy-8.zip
 do
 	if [ -f $downed ];
 	then
