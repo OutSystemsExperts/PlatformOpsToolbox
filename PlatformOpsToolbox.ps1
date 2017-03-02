@@ -26,7 +26,9 @@ function MainMenu
     Write-Host " "
     Write-Host "1: Type '1' to validate the OutSytems Platform pre-requirements on this server."
     Write-Host " "
-    Write-Host "2: Type '2' to open the extra Tools Menu."
+    Write-Host "2: Type '2' to install the OutSytems Platform pre-requirements on this server."
+    Write-Host " "
+    Write-Host "3: Type '3' to open the extra Tools Menu."
     Write-Host " "
     Write-Host "Quit: Type anything else to quit."
     Write-Host " "
@@ -65,10 +67,14 @@ MainMenu
          & $ValidatorDir\installValidator.ps1 ; exit
 
      } '2' {
+         'You chose to install the requirements described in the pre-installation block of the OutSystems Installation Checklist'
+         & $ValidatorDir\Pre-requirementsInstallation.ps1 ; exit
+     
+     } '3' {
          ToolsMenu
 
-     } '3' {
-         'You chose to quit #3'
+     } '4' {
+         'You chose to quit #4'
      } 'q' {
          return
      }
