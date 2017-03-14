@@ -10,8 +10,10 @@ function exitCode
 {
   if($?) {
   Write-Host "The last command executed successfully"
+  return
   } else {
   write-host "The last command failed"
+  return
   }
 }
 
@@ -44,7 +46,7 @@ function MainMenu
 			
 		} default { 
 			$global:xExitSession=$true;
-			break     
+			    
 		}
 	}
 }
@@ -77,38 +79,41 @@ function ToolsMenu
             'You chose to disable SSLv3'
              & regedit /s $ToolsDir\DisableSSLv3.reg
              exitCode
-             Read-Host 'Press any key to return to Main Menu'
-			 break
+             pause
+			 return;
+			 
       } 2 {
             'You chose to disable FIPS Compliant Algorithms'
              ## Were we will list the available tools and invoke them accordingly.
              & regedit /s $ToolsDir\DisableFIPS.reg
              exitCode
-             Read-Host 'Press any key to return to Main Menu'
-			 break
+             pause
+			 return
+			 
       } 3 {
             'You chose to set ""MSMQ AlwaysWithoutDS"" to 1'
              & regedit /s $ToolsDir\SetMSMQAlwaysWithoutDS.reg
              exitCode
-             Read-Host 'Press any key to return to Main Menu'
-			 break
+             pause
+			 return
+			 
       } 0 {
-             break
+             
       } default { 
 			 $global:xExitSession=$true;
-			 break     
+			 return     
 		}
     }
 
 }
 		
-
 MainMenu
 If ($xExitSession){
-	exit-pssession #… User quit & Exit
+	exit
 }else{
-	.\PlatformOpsToolbox.ps1 #… Loop the function
-}
+	& "$MainDir\PlatformOpsToolbox.ps1" #… Loop the function
+	pause
+	}
 
 
 		
