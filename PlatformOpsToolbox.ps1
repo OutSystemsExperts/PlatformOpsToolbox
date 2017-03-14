@@ -4,7 +4,7 @@ $MainDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ToolsDir  = Join-Path -Path $MainDir -ChildPath \MiscScripts\Windows
 $ValidatorDir  = Join-Path -Path $MainDir -ChildPath \InstallationValidator\Windows
 $ToolsDir  = Join-Path -Path $MainDir -ChildPath \AutomaticInstaller\Windows
-
+$global:xExitSession=$false
 
 function exitCode
 {
@@ -20,6 +20,7 @@ function MainMenu
 {
     param (
         [string]$Title = 'PlatformOps ToolBox'
+		
     )
     Clear-Host
     Write-Host "================ $Title ================"
@@ -30,6 +31,22 @@ function MainMenu
     Write-Host " "
     Write-Host "Quit: Type anything else to quit."
     Write-Host " "
+	
+	$selectedMain = Read-Host "Please type your selection"
+	switch ($selectedMain)
+	{
+		1 {
+			'You chose to validate the requirements described in the pre-installation block of the OutSystems Installation Checklist'
+			& $ValidatorDir\installValidator.ps1 ; exit
+
+		} 2 {
+			ToolsMenu
+			
+		} default { 
+			$global:xExitSession=$true;
+			break     
+		}
+	}
 }
 
 function ToolsMenu
@@ -48,58 +65,52 @@ function ToolsMenu
     Write-Host " "
     Write-Host "3: Type 3 to set ""MSMQ AlwaysWithoutDS"" to 1"
     Write-Host " "
-    #Write-Host "0: Type 0 to go back to the Main Menu"
-    #Write-Host " "
+    Write-Host "0: Type 0 to go back to the Main Menu"
+    Write-Host " "
     Write-Host "Quit: Type anything else to quit."
     Write-Host " "
+	
+    $selectedTools = Read-Host "Please type your selection"
+    switch ($selectedTools)
+    {
+        1 {
+            'You chose to disable SSLv3'
+             & regedit /s $ToolsDir\DisableSSLv3.reg
+             exitCode
+             Read-Host 'Press any key to return to Main Menu'
+			 break
+      } 2 {
+            'You chose to disable FIPS Compliant Algorithms'
+             ## Were we will list the available tools and invoke them accordingly.
+             & regedit /s $ToolsDir\DisableFIPS.reg
+             exitCode
+             Read-Host 'Press any key to return to Main Menu'
+			 break
+      } 3 {
+            'You chose to set ""MSMQ AlwaysWithoutDS"" to 1'
+             & regedit /s $ToolsDir\SetMSMQAlwaysWithoutDS.reg
+             exitCode
+             Read-Host 'Press any key to return to Main Menu'
+			 break
+      } 0 {
+             break
+      } default { 
+			 $global:xExitSession=$true;
+			 break     
+		}
+    }
+
+}
+		
+
+MainMenu
+If ($xExitSession){
+	exit-pssession #… User quit & Exit
+}else{
+	.\PlatformOpsToolbox.ps1 #… Loop the function
 }
 
 
-
-MainMenu
- $selectedMain = Read-Host "Please type your selection"
- switch ($selectedMain)
- {
-     '1' {
-         'You chose to validate the requirements described in the pre-installation block of the OutSystems Installation Checklist'
-         & $ValidatorDir\installValidator.ps1 ; exit
-
-     } '2' {
-         ToolsMenu
-
-     } '3' {
-         'You chose to quit #3'
-     } 'q' {
-         return
-     }
- }
-
-
- ToolsMenu
-         $selectedTools = Read-Host "Please type your selection"
-         switch ($selectedTools)
-         {
-             '1' {
-                 'You chose to disable SSLv3'
-                   & regedit /s $ToolsDir\DisableSSLv3.reg
-                   exitCode
-                   Read-Host 'Press enter to exit'
-              } '2' {
-                  'You chose to disable FIPS Compliant Algorithms'
-                  ## Were we will list the available tools and invoke them accordingly.
-                  & regedit /s $ToolsDir\DisableFIPS.reg
-                  exitCode
-                  Read-Host 'Press enter to exit'
-              } '3' {
-                  'You chose to set ""MSMQ AlwaysWithoutDS"" to 1'
-                  & regedit /s $ToolsDir\SetMSMQAlwaysWithoutDS.reg
-                  exitCode
-                  Read-Host 'Press enter to exit'
-         #### Need to work on the innermenu before calling this one
-         #     } '0' {
-         #         'Going back to the Main Menu'
-         #         MainMenu
-              } 'q' {
-                  return
-              }
-        }
+		
+		
+		
