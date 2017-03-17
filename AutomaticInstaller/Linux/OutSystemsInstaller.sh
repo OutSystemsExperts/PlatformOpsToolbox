@@ -121,31 +121,31 @@ service iptables save
 
 # Function 5 : Prepare ANT package
 prepANT () {
-if [ -f apache-ant-1.9.8-bin.zip ];
+if [ -f apache-ant-1.9.9-bin.zip ];
 then
-	echo "apache-ant-1.9.8-bin.zip exists in folder, will not re-download."
+	echo "apache-ant-1.9.9-bin.zip exists in folder, will not re-download."
 else
-	echo "I will now download apache-ant-1.9.8-bin.zip"
-	wget http://mirror.catn.com/pub/apache//ant/binaries/apache-ant-1.9.8-bin.zip
+	echo "I will now download apache-ant-1.9.9-bin.zip"
+	wget http://mirror.catn.com/pub/apache//ant/binaries/apache-ant-1.9.9-bin.zip
 	returncode "Download of ANT"
 fi
-unzip -o apache-ant-1.9.8-bin.zip -d /opt/
+unzip -o apache-ant-1.9.9-bin.zip -d /opt/
 returncode "Unzip ANT to target folder"
 
 }
 
 # Function 6 : Install Sun's Java JDK 8u102 and prepare environment variables
 prepJDK () {
-if [ -f jdk-8u102-linux-x64.rpm ];
+if [ -f jdk-8u121-linux-x64.rpm ];
 then
-	echo "jdk-8u102-linux-x64.rpm exists in folder, will not re-download."
+	echo "jdk-8u121-linux-x64.rpm exists in folder, will not re-download."
 else
-	echo "I will now download jdk-8u102-linux-x64.rpm"
-	wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u102-b14/jdk-8u102-linux-x64.rpm
+	echo "I will now download jdk-8u121-linux-x64.rpm"
+	wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u121-b13/e9e7ea248e2c4826b92b3f075a80e441/jdk-8u121-linux-x64.rpm
 	returncode "Download JDK from Oracle"
 fi
-rpm -i jdk-8u102-linux-x64.rpm ;
-returncode "Installation JDK 8u102"
+rpm -i jdk-8u121-linux-x64.rpm ;
+returncode "Installation JDK 8u121"
 JAVA_HOME="/usr/java/`ls /usr/java/ | grep jdk1.8.0 | sort -t_ -n -k2 | tail -1`"
 mkdir -p /usr/lib/jvm
 alternatives --install /usr/bin/java java $JAVA_HOME/bin/java 16999
