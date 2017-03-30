@@ -115,7 +115,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   # .NET Framework 3.5
   Write-Host "Validating .NET Framework 3.5" -ForegroundColor Gray  
   # If not installed it doesn't return anything 
-  $NET35Version = Invoke-Command -ComputerName $ComputerName {Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" -name Version | select -expand Version}
+  $NET35Version = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" -name Version | select -expand Version
 
   # If $NET35Version has a value it means .NET Framework 3.5 is installed
   if($NET35Version)
@@ -129,7 +129,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   # .NET Framework 4.5
   Write-Host "Validating .NET Framework 4.5" -ForegroundColor Gray  
   # If not installed it doesn't return anything
-  $NET45Version = Invoke-Command -ComputerName $ComputerName {Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" -name Version | select -expand Version}
+  $NET45Version = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" -name Version | select -expand Version
 
   # If $NET45Version has a value it means .NET Framework 4.5 is installed
   if($NET45Version)
@@ -175,7 +175,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # Application Server role (Windows Features)
   Write-Host "Validating Application Server role" -ForegroundColor Gray  
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Application-Server"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Application-Server"}
   if($CheckInstalled.Installed)
   {
     Write-Host "Application Server Role is installed" "`n" -ForegroundColor Green
@@ -189,7 +189,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   Write-Host "Validating Application Server Role .NET Framework 3.5 Features dependency" -ForegroundColor Gray  
   if($OSVersion -eq "2008")
   {
-    $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "NET-Framework"}
+    $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "NET-Framework"}
     if($CheckInstalled.Installed)
     {
       Write-Host "Application Server .NET 3.5 Framework Features is installed" "`n" -ForegroundColor Green
@@ -201,7 +201,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   }
   Elseif($OSVersion -eq "2012")
   {
-    $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "NET-Framework-Features"}
+    $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "NET-Framework-Features"}
     if($CheckInstalled.Installed)
     {
       Write-Host "Application Server .NET 3.5 Framework Features is installed" "`n" -ForegroundColor Green
@@ -226,7 +226,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature Default Document
   Write-Host "Validating IIS Default Document" -ForegroundColor Gray  
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Default-Doc"}
+  $CheckInstalled = Get-WindowsFeature  | Where-Object {$_.Name -eq "Web-Default-Doc"}
   if($CheckInstalled.Installed)
   {
     Write-Host "Web Server Server Default Document is installed" "`n" -ForegroundColor Green
@@ -238,7 +238,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS featue Directory Browsing
   Write-Host "Validating IIS Directory Browsing" -ForegroundColor Gray  
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Dir-Browsing"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Dir-Browsing"}
   if($CheckInstalled.Installed)
   {
     Write-Host "Web Server Server Directory Browsing is installed" "`n"  -ForegroundColor Green
@@ -250,7 +250,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature HTTP Errors
   Write-Host "Validating IIS HTTP Errors" -ForegroundColor Gray  
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Http-Errors"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Http-Errors"}
   if($CheckInstalled.Installed)
   {
     Write-Host "Web Server Server HTTP Errors is installed `n" -ForegroundColor Green
@@ -262,7 +262,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature Static Content
   Write-Host "Validating IIS Static Content" -ForegroundColor Gray  
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Static-Content"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Static-Content"}
   if($CheckInstalled.Installed)
   {
     Write-Host "Web Server Server Static Content is installed `n" -ForegroundColor Green
@@ -274,7 +274,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature HTTP Logging
   Write-Host "Validating IIS HTTP Logging" -ForegroundColor Gray  
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Http-Logging"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Http-Logging"}
   if($CheckInstalled.Installed)
   {
     Write-Host "Web Server Server HTTP Logging is installed `n" -ForegroundColor Green
@@ -286,7 +286,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature Request Monitor
   Write-Host "Validating IIS Request Monitor" -ForegroundColor Gray  
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Request-Monitor"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Request-Monitor"}
   if($CheckInstalled.Installed)
   {
     Write-Host "Web Server Server Request Monitor is installed `n" -ForegroundColor Green
@@ -298,7 +298,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature Static Compression
   Write-Host "Validating IIS Static Compression" -ForegroundColor Gray  
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Stat-Compression"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Stat-Compression"}
   if($CheckInstalled.Installed)
   {
     Write-Host "Web Server Server Static Compression is installed `n" -ForegroundColor Green
@@ -310,7 +310,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature Dynamic Compression
   Write-Host "Validating IIS Dynamic Compression" -ForegroundColor Gray  
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Dyn-Compression"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Dyn-Compression"}
   if($CheckInstalled.Installed)
   {
     Write-Host "Web Server Server Dynamic Compression is installed `n" -ForegroundColor Green
@@ -322,7 +322,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature Request Filtering
   Write-Host "Validating IIS Request Filtering" -ForegroundColor Gray  
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Filtering"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Filtering"}
   if($CheckInstalled.Installed)
   {
     Write-Host "Web Server Server Web Filtering is installed `n" -ForegroundColor Green
@@ -334,7 +334,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS Windows Authentication
   Write-Host "Validating IIS Windows Authentication" -ForegroundColor Gray  
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Windows-Auth"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Windows-Auth"}
   if($CheckInstalled.Installed)
   {
     Write-Host "Web Server Server Windows Authentication is installed `n" -ForegroundColor Green
@@ -346,7 +346,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature .NET Extensibility 3.5
   Write-Host "Validating IIS .NET Extensibility 3.5" -ForegroundColor Gray
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Net-Ext"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Net-Ext"}
   if($CheckInstalled.Installed)
   {
     Write-Host 'Web Server Server .NET 3.5 Extensibility is installed' "`n" -ForegroundColor Green | tee-object –FilePath "c:\temp\teste2.htm"
@@ -358,7 +358,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature .NET Extensibility 4.5
   Write-Host "Validating IIS .NET Extensibility 4.5" -ForegroundColor Gray
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Net-Ext45"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Net-Ext45"}
   if($CheckInstalled.Installed)
   {
     Write-Host 'Web Server Server .NET 4.5 Extensibility is installed' "`n" -ForegroundColor Green | tee-object –FilePath "c:\temp\teste2.htm"
@@ -370,7 +370,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature ASP .NET 3.5
   Write-Host "Validating IIS ASP .NET 3.5" -ForegroundColor Gray
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Asp-Net"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Asp-Net"}
   if($CheckInstalled.Installed)
   {
     Write-Host 'Web Server Server ASP .NET 3.5 is installed' "`n" -ForegroundColor Green
@@ -382,7 +382,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature ASP .NET 4.5
   Write-Host "Validating IIS ASP .NET 4.5" -ForegroundColor Gray
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Asp-Net45"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Asp-Net45"}
   if($CheckInstalled.Installed)
   {
     Write-Host 'Web Server Server ASP .NET 4.5 is installed' "`n" -ForegroundColor Green 
@@ -394,7 +394,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature ISAPI Extensions
   Write-Host "Validating IIS ISAPI Extensions" -ForegroundColor Gray
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-ISAPI-Ext"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-ISAPI-Ext"}
   if($CheckInstalled.Installed)
   {
     Write-Host 'Web Server Server .ISAPI Extensions is installed' "`n" -ForegroundColor Green 
@@ -406,7 +406,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS ISAPI Filter
   Write-Host "Validating IIS ISAPI Filter" -ForegroundColor Gray
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-ISAPI-Filter"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-ISAPI-Filter"}
   if($CheckInstalled.Installed)
   {
     Write-Host 'Web Server Server ISAPI Filters is installed' "`n" -ForegroundColor Green 
@@ -418,7 +418,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature Management Console
   Write-Host "Validating IIS IIS Management Console" -ForegroundColor Gray
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Mgmt-Tools"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Mgmt-Tools"}
   if($CheckInstalled.Installed)
   {
     Write-Host 'Web Server Server Management Console is installed' "`n" -ForegroundColor Green 
@@ -429,7 +429,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # IIS feature Metabase Compatibility
   Write-Host "Validating IIS 6 Metabase Compatibility" -ForegroundColor Gray
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Metabase"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Metabase"}
   if($CheckInstalled.Installed)
   {
     Write-Host 'Web Server Server IIS 6 Management Compability is installed' "`n" -ForegroundColor Green
@@ -441,7 +441,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # WAS process model
   Write-Host "Validating WAS Process Model" -ForegroundColor Gray
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "WAS-Process-Model"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "WAS-Process-Model"}
   if($CheckInstalled.Installed)
   {
     Write-Host 'WAS Process Model is installed'  "`n" -ForegroundColor Green
@@ -453,7 +453,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # WAS .NET Environment
   Write-Host "Validating WAS .NET Environment" -ForegroundColor Gray
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "WAS-NET-Environment"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "WAS-NET-Environment"}
   if($CheckInstalled.Installed)
   {
     Write-Host 'WAS .NET Environment is installed' "`n" -ForegroundColor Green 
@@ -465,7 +465,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
 
   # WAS Configuration APIs
   Write-Host "Validating WAS Configuration APIs " -ForegroundColor Gray
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "WAS-Config-APIs"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "WAS-Config-APIs"}
   if($CheckInstalled.Installed)
   {
     Write-Host 'WAS Configuration APIs is installed' "`n" -ForegroundColor Green 
@@ -477,7 +477,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   
   # Message queue server
   Write-Host "Validating Message Queue Server" -ForegroundColor Gray
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "MSMQ-Server"}
+  $CheckInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "MSMQ-Server"}
   if($CheckInstalled.Installed)
   {
     Write-Host 'Message Queue Server is installed' "`n" -ForegroundColor Green
@@ -501,6 +501,40 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
     Write-Host 'FIPS Compliant Algorithms are still enabled'"`n" -ForegroundColor Red
   }
 
+
+  #Check Management Instrumentation Service
+  $WMIService = Get-Service -Name "Winmgmt"
+  $WMIServiceStartMode = (Get-WmiObject Win32_Service -filter "Name='Winmgmt'").StartMode
+
+  if($WMIService.Status -eq "Running"){	
+
+   	if($WMIServiceStartMode -eq "Auto") {
+    	Write-Host "Windows Management Instrumentation Service is Running and in Automatic start mode" "`n" -ForegroundColor Green
+    	} else{
+     		Write-Host "Windows Management Instrumentation Service is already running" "`n" -ForegroundColor Green
+            Write-Host "But the start mode is manual, please set it as automatic" "`n" -ForegroundColor Red
+    	}
+    	
+   }else{
+    	Write-Host "Windows Management Instrumentation Service is not running" "`n" -ForegroundColor Red
+   }
+
+
+   #Check Windows Search Service
+   $WSearchService = Get-Service -Name "WSearch"
+   $WSearchServiceStartMode = (Get-WmiObject Win32_Service -filter "Name='WSearch'").StartMode
+
+   if(!$WSearchService){	
+
+       Write-Host "Windows Search Service does not exists" "`n" -ForegroundColor Green
+    	
+   }else{
+       	if($WSearchServiceStartMode -eq "Disabled") {
+            Write-Host "Windows Search Service has start mode as Disabled" "`n" -ForegroundColor Green
+       	} else{
+        	Write-Host "Windows Search Service does not have its start mode as Disabled" "`n" -ForegroundColor Red
+       	}	
+   }
 
 
   # Message queue server reg Key to never use domain controller servers
