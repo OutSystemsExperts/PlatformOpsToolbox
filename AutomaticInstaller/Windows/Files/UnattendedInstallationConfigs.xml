@@ -1,0 +1,118 @@
+<Configuration>
+	<DevelopmentEnvironment>
+		<InstallPath>"C:\Program Files\OutSystems\Development Environment 10"</InstallPath>
+	</DevelopmentEnvironment>
+	<PlatformServer>
+		<InstallPath>"C:\Program Files\OutSystems\Platform Server"</InstallPath>
+		<RuntimeDatabaseConfigs>	
+			<!-- 
+				Database options are:
+				- SQLServer
+				- Oracle
+				- MySQL
+			-->
+			<DatabaseKind>SQLServer</DatabaseKind>
+			<!-- 
+				Database configurations
+				Applies to all DBKinds
+			-->
+			<AdminUser>OSAdmin</AdminUser>
+			<AdminUserPassword>PasswordForAdmUser</AdminUserPassword>
+			<RuntimeUser>OSRuntime</RuntimeUser>
+			<RuntimeUserPassword>PasswordForRtmUser</RuntimeUserPassword>
+			<LogUser>OSAdmin</LogUser>
+			<LogUserPassword>PasswordForLogUser</LogUserPassword>
+			<!--
+				SQL Server configurations
+				Uncomment next section if DBKind is SQL Server
+			-->
+			<!--
+			<SQLServerConfigs>
+				<Server>Hostname or IP</Server>
+				<Catalog>OutSystems Database catalog</Catalog>
+				<UsedAuthenticationMode>"Database Authentication" or "Windows Authentication"</UsedAuthenticationMode>
+			</SQLServerConfigs>
+			-->
+			<!--
+				Oracle configurations
+				Uncomment next section if DBKind is Oracle
+			-->
+			<!--
+			<OracleConfigs>
+				<NamingType>"Service Name" or "TNS Name"</NamingType>
+				<TNSName>TNSName (only available if "NamingType" ="TNS Names"<TNSName>
+				<Host>Hostname or IP(only available if "NamingType" ="Service Name"</Host>
+				<Port>Port where the service listens(only available if "NamingType" ="Service Name"</Port>
+				<ServiceName>Service Name(only available if "NamingType" ="Service Name"</ServiceName>
+				<AdminTablespace>Tablespace for system tables</AdminTablespace>
+				<IndexTablespace>Tablespace for indexes</IndexTablespace>
+				<RuntimeTablespace>Tablespace for user tables</RuntimeTablespace>
+				<LogTablespace>Tablespace for log tables</LogTablespace>
+			</OracleConfigs>
+			-->
+			<!--
+				MySQL configurations
+				Uncomment next section if DBKind is MySQL
+			-->
+			<!--
+			<MySQLConfigs>
+				<Server>Hostname or IP</Server>
+				<Schema>OutSystems Database schema</Schema>
+			</MySQLConfigs>
+			-->
+		</RuntimeDatabaseConfigs>
+		<SessionDatabaseConfigs>
+			<SessionUser>OSSession</SessionUser>
+			<SessionUserPassword>SPasswordForSessUser</SessionUserPassword>
+			<!--
+				SQL Server configurations
+				Uncomment next section if DBKind is SQL Server
+			-->
+			<!--
+			<SQLServerConfigs>
+				<Server>Hostname or IP</Server>
+				<Catalog>OutSystems Database catalog</Catalog>
+				<UsedAuthenticationMode>"Database Authentication" or "Windows Authentication"</UsedAuthenticationMode>
+			</SQLServerConfigs>
+			-->
+			<!--
+				Oracle configurations
+				Uncomment next section if DBKind is Oracle
+			-->
+			<!--
+			<OracleConfigs>
+				<NamingType>"Service Name" or "TNS Name"</NamingType>
+				<TNSName>TNSName (only available if "NamingType" ="TNS Names"<TNSName>
+				<Host>Hostname or IP(only available if "NamingType" ="Service Name"</Host>
+				<Port>Port where the service listens(only available if "NamingType" ="Service Name"</Port>
+				<ServiceName>Service Name(only available if "NamingType" ="Service Name"</ServiceName>
+				<AdminTablespace>Tablespace for system tables</AdminTablespace>
+				<IndexTablespace>Tablespace for indexes</IndexTablespace>
+				<RuntimeTablespace>Tablespace for user tables</RuntimeTablespace>
+				<LogTablespace>Tablespace for log tables</LogTablespace>
+			</OracleConfigs>
+			-->
+			<!--
+				MySQL configurations
+				Uncomment next section if DBKind is MySQL
+			-->
+			<!--
+			<MySQLConfigs>
+				<Server>Hostname or IP</Server>
+				<Schema>OutSystems Database schema</Schema>
+			</MySQLConfigs>
+			-->
+		</SessionDatabaseConfigs>
+		<ServiceConfiguration>
+			<CompilerServerHostname>CompileServer</CompilerServerHostname>
+			<CompilerServerPort>12000</CompilerServerPort>
+			<DeploymentServerPort>12001</DeploymentServerPort>
+			<LogServerPort>12003</LogServerPort>
+			<SchedulerServerPort>12002</SchedulerServerPort>
+			<SMSConnectortPort>12004</SMSConnectortPort>
+			<MaxConcurrentTimers>3</MaxConcurrentTimers>
+			<WeeksToKeep>4</WeeksToKeep>
+			<OutgoingIPAddress>Front-end IP (leave empty for "automatic" selection</OutgoingIPAddress>
+		</ServiceConfiguration>
+	</PlatformServer>
+</Configuration>

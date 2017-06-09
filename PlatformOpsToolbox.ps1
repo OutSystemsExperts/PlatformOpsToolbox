@@ -1,10 +1,10 @@
-if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
+﻿if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
 
 $MainDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ToolsDir  = Join-Path -Path $MainDir -ChildPath \MiscScripts\Windows
-$ValidatorDir  = Join-Path -Path $MainDir -ChildPath \InstallationValidator\Windows
-$ToolsDir  = Join-Path -Path $MainDir -ChildPath \AutomaticInstaller\Windows
-
+$PreReqDir  = Join-Path -Path $MainDir -ChildPath \InstallationValidator\Windows
+$InstallerDir  = Join-Path -Path $MainDir -ChildPath \AutomaticInstaller\Windows
+$global:xExitSession=$false
 
 function exitCode
 {
@@ -15,97 +15,107 @@ function exitCode
   }
 }
 
+$OSisInstalled = $false
+
 
 function MainMenu
 {
     param (
         [string]$Title = 'PlatformOps ToolBox'
+		
     )
+
     Clear-Host
+    ##if($OSisInstalled -eq $True){
+     ##   Write-Host "OutSystems Platform is already installed."
+   # }    
     Write-Host "================ $Title ================"
     Write-Host " "
-    Write-Host "1: Type '1' to validate the OutSytems Platform pre-requirements on this server."
+    Write-Host "1: Type '1' to access the OutSytems Platform pre-requirements menu."
     Write-Host " "
-    Write-Host "2: Type '2' to install the OutSytems Platform pre-requirements on this server."
+    Write-Host "2: Type '2' to install the OutSytems Platform."
     Write-Host " "
-    Write-Host "3: Type '3' to open the extra Tools Menu."
+    Write-Host "3: Type '3' to run system tunning for OutSytems Platform."
     Write-Host " "
     Write-Host "Quit: Type anything else to quit."
     Write-Host " "
+	
+	$selectedMain = Read-Host "Please type your selection"
+	switch ($selectedMain)
+	{
+		1 {
+			ValidatorMenu
+            
+		} 2 {
+
+            # Verify if the OutSystems Platform Server is installed
+            
+           # $OS = Get-ItemProperty HKLM:\SOFTWARE\OutSystems\Installer\Server -ErrorAction SilentlyContinue
+            #if($OS -eq $null){
+                & $InstallerDir\Platform_Installer.ps1
+            ##}else{
+               # $OSisInstalled = $True
+           ## }			
+		
+        } 3 {
+			& $InstallerDir\OutSystems_Platform_Tunning.ps1
+			
+		} default { 
+			$global:xExitSession=$true;
+			    
+		}
+	}
 }
 
-function ToolsMenu
+function ValidatorMenu
 {
     param (
-        [string]$Title = 'PlatformOps Tools Menu'
+        [string]$Title = 'OutSystems Platform Pre-Requirements Menu'
     )
     Clear-Host
     Write-Host "================ $Title ================"
     Write-Host " "
-    Write-Host " If you are unsure about what these tools do, please check the ReadMe and the OutSystems Platform Installation Checklist."
+    Write-Host "1: Type 1 to validate OutSystems Platform Pre-Requirements on this server"
     Write-Host " "
-    Write-Host "1: Type 1 to disable SSLv3 in order to prevent POODLE Vulnerability "
+    Write-Host "2: Type 2 to install OutSystems Platform Pre-Requirements"
     Write-Host " "
-    Write-Host "2: Type 2 to disable FIPS Compliant Algorithms "
+    Write-Host "0: Type 0 to go back to the Main Menu"
     Write-Host " "
-    Write-Host "3: Type 3 to set ""MSMQ AlwaysWithoutDS"" to 1"
-    Write-Host " "
-    #Write-Host "0: Type 0 to go back to the Main Menu"
-    #Write-Host " "
     Write-Host "Quit: Type anything else to quit."
     Write-Host " "
+	
+    $selectedTools = Read-Host "Please type your selection"
+    switch ($selectedTools)
+    {
+        1 {
+            'You chose OutSystems Platform Pre-Requirements validation'
+             & $PreReqDir\Installation_Validator.ps1
+             exitCode
+             pause
+			 
+      } 2 {
+            'You chose OutSystems Platform Pre-Requirements installation'
+             & $PreReqDir\Pre-Requirements_Installator.ps1 -ScriptPath  $MainDir
+             exitCode
+             pause
+			 
+      } 0 {
+             
+      } default { 
+			 $global:xExitSession=$true;
+		}
+    }
+
 }
 
-
-
+		
 MainMenu
- $selectedMain = Read-Host "Please type your selection"
- switch ($selectedMain)
- {
-     '1' {
-         'You chose to validate the requirements described in the pre-installation block of the OutSystems Installation Checklist'
-         & $ValidatorDir\installValidator.ps1 ; exit
-
-     } '2' {
-         'You chose to install the requirements described in the pre-installation block of the OutSystems Installation Checklist'
-         & $ValidatorDir\Pre-requirementsInstallation.ps1 ; exit
-     
-     } '3' {
-         ToolsMenu
-
-     } '4' {
-         'You chose to quit #4'
-     } 'q' {
-         return
-     }
- }
+If ($xExitSession){
+	exit
+}else{
+	& "$MainDir\PlatformOpsToolbox.ps1" #â€¦ Loop the function
+	}
 
 
- ToolsMenu
-         $selectedTools = Read-Host "Please type your selection"
-         switch ($selectedTools)
-         {
-             '1' {
-                 'You chose to disable SSLv3'
-                   & regedit /s $ToolsDir\DisableSSLv3.reg
-                   exitCode
-                   Read-Host 'Press enter to exit'
-              } '2' {
-                  'You chose to disable FIPS Compliant Algorithms'
-                  ## Were we will list the available tools and invoke them accordingly.
-                  & regedit /s $ToolsDir\DisableFIPS.reg
-                  exitCode
-                  Read-Host 'Press enter to exit'
-              } '3' {
-                  'You chose to set ""MSMQ AlwaysWithoutDS"" to 1'
-                  & regedit /s $ToolsDir\SetMSMQAlwaysWithoutDS.reg
-                  exitCode
-                  Read-Host 'Press enter to exit'
-         #### Need to work on the innermenu before calling this one
-         #     } '0' {
-         #         'Going back to the Main Menu'
-         #         MainMenu
-              } 'q' {
-                  return
-              }
-        }
+		
+		
