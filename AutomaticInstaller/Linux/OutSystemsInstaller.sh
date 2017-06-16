@@ -235,7 +235,7 @@ iptables_config
 prepANT
 
 # Step 6 : Install Sun's Java JDK and prepare environment variables
-#prepJDK
+prepJDK
 
 # Step 7 : Install Widlfly
 instWildFly
