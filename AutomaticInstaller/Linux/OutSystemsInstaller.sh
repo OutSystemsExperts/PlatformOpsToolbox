@@ -48,7 +48,7 @@ esac
 
 # Function 1: Lets define the function that will be called later to install the dependencies.
 instdep () {
-for package in iptables openssh-server bash zip unzip dos2unix patch lsb
+for package in iptables openssh-server bash zip unzip dos2unix patch
 do
 	is_installed=`rpm -qa $package | wc -l`
 	echo "This is now going to install the rpm for ${package} "
