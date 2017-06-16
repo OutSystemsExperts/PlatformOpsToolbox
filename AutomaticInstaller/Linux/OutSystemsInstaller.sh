@@ -143,9 +143,9 @@ else
 	echo "I will now download jdk-8u131-linux-x64.rpm"
 	wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" https://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.rpm
 	returncode "Download JDK from Oracle"
+	rpm -i jdk-8u131-linux-x64.rpm ;
+	returncode "Installation JDK 8u131";
 fi
-rpm -i jdk-8u131-linux-x64.rpm ;
-returncode "Installation JDK 8u131"
 JAVA_HOME="/usr/java/`ls /usr/java/ | grep jdk1.8.0 | sort -t_ -n -k2 | tail -1`"
 mkdir -p /usr/lib/jvm
 alternatives --install /usr/bin/java java $JAVA_HOME/bin/java 16999
