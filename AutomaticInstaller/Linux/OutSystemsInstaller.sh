@@ -202,7 +202,7 @@ returncode "Placing JCE in the target outsystems platform folder"
 
 # Function 10 : Take out the trash
 cleanitall () {
-for downed in apache-ant-1.9.8-bin.zip jdk-8u102-linux-x64.rpm wildfly-8.2.0.Final.zip jce_policy-8.zip
+for downed in apache-ant-1.9.8-bin.zip jdk-8*.rpm wildfly-8.2.0.Final.zip jce_policy-8.zip
 do
 	if [ -f $downed ];
 	then
