@@ -136,16 +136,16 @@ returncode "Unzip ANT to target folder"
 
 # Function 6 : Install Sun's Java JDK 8u102 and prepare environment variables
 prepJDK () {
-if [ -f jdk-8u121-linux-x64.rpm ];
+if [ -f jdk-8u131-linux-x64.rpm ];
 then
-	echo "jdk-8u121-linux-x64.rpm exists in folder, will not re-download."
+	echo "jdk-8u131-linux-x64.rpm exists in folder, will not re-download."
 else
-	echo "I will now download jdk-8u121-linux-x64.rpm"
+	echo "I will now download jdk-8u131-linux-x64.rpm"
 	wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" https://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.rpm
 	returncode "Download JDK from Oracle"
 fi
-rpm -i jdk-8u121-linux-x64.rpm ;
-returncode "Installation JDK 8u121"
+rpm -i jdk-8u131-linux-x64.rpm ;
+returncode "Installation JDK 8u131"
 JAVA_HOME="/usr/java/`ls /usr/java/ | grep jdk1.8.0 | sort -t_ -n -k2 | tail -1`"
 mkdir -p /usr/lib/jvm
 alternatives --install /usr/bin/java java $JAVA_HOME/bin/java 16999
