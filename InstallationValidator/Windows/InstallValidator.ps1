@@ -452,16 +452,16 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   }
 
   # WAS .NET Environment
-  Write-Host "Validating WAS .NET Environment" -ForegroundColor Gray
-  $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "WAS-NET-Environment"}
-  if($CheckInstalled.Installed)
-  {
-    Write-Host 'WAS .NET Environment is installed' "`n" -ForegroundColor Green 
-  }
-  Else
-  {
-    Write-Host 'WAS .NET Environment is not installed'  "`n" -ForegroundColor Red
-  }
+  #Write-Host "Validating WAS .NET Environment" -ForegroundColor Gray
+  #$CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "WAS-NET-Environment"}
+  #if($CheckInstalled.Installed)
+  #{
+  #  Write-Host 'WAS .NET Environment is installed' "`n" -ForegroundColor Green 
+  #}
+  #Else
+  #{
+  #  Write-Host 'WAS .NET Environment is not installed'  "`n" -ForegroundColor Red
+  #}
 
   # WAS Configuration APIs
   Write-Host "Validating WAS Configuration APIs " -ForegroundColor Gray
