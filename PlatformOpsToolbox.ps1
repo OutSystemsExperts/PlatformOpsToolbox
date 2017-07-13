@@ -1,9 +1,9 @@
-if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
+﻿if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
 
 $MainDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ToolsDir  = Join-Path -Path $MainDir -ChildPath \MiscScripts\Windows
-$ValidatorDir  = Join-Path -Path $MainDir -ChildPath \InstallationValidator\Windows
-$ToolsDir  = Join-Path -Path $MainDir -ChildPath \AutomaticInstaller\Windows
+$PreReqDir  = Join-Path -Path $MainDir -ChildPath \InstallationValidator\Windows
+$InstallerDir  = Join-Path -Path $MainDir -ChildPath \AutomaticInstaller\Windows
 $global:xExitSession=$false
 
 function exitCode
@@ -13,6 +13,14 @@ function exitCode
   } else {
   write-host "The last command failed"
   }
+}
+
+# Verify if the OutSystems Platform Server is installed
+try{
+    $OS = Get-ItemProperty HKLM:\SOFTWARE\OutSystems\Installer\Server -ErrorAction SilentlyContinue
+}
+catch{
+    Write-Warning "Outsystems Platform Server is not installed on this server."
 }
 
 
@@ -25,9 +33,15 @@ function MainMenu
     Clear-Host
     Write-Host "================ $Title ================"
     Write-Host " "
-    Write-Host "1: Type '1' to validate the OutSytems Platform pre-requirements on this server."
-    Write-Host " "
-    Write-Host "2: Type '2' to open the extra Tools Menu."
+    Write-Host "1: Type '1' to access the OutSytems Platform pre-requirements menu."
+    if(!$OS){
+        Write-Host " "
+        Write-Host "2: Type '2' to install the OutSytems Platform."
+    }
+    if($OS){
+        Write-Host " "
+        Write-Host "2: Type '2' to run system tunning for OutSytems Platform."
+    }
     Write-Host " "
     Write-Host "Quit: Type anything else to quit."
     Write-Host " "
@@ -36,11 +50,10 @@ function MainMenu
 	switch ($selectedMain)
 	{
 		1 {
-			'You chose to validate the requirements described in the pre-installation block of the OutSystems Installation Checklist'
-			& $ValidatorDir\installValidator.ps1
-
+			ValidatorMenu
+            
 		} 2 {
-			ToolsMenu
+			& $InstallerDir\Platform_Installer.ps1
 			
 		} default { 
 			$global:xExitSession=$true;
@@ -49,21 +62,17 @@ function MainMenu
 	}
 }
 
-function ToolsMenu
+function ValidatorMenu
 {
     param (
-        [string]$Title = 'PlatformOps Tools Menu'
+        [string]$Title = 'OutSystems Platform Pre-Requirements Menu'
     )
     Clear-Host
     Write-Host "================ $Title ================"
     Write-Host " "
-    Write-Host " If you are unsure about what these tools do, please check the ReadMe and the OutSystems Platform Installation Checklist."
+    Write-Host "1: Type 1 to validate OutSystems Platform Pre-Requirements on this server"
     Write-Host " "
-    Write-Host "1: Type 1 to disable SSLv3 in order to prevent POODLE Vulnerability "
-    Write-Host " "
-    Write-Host "2: Type 2 to disable FIPS Compliant Algorithms "
-    Write-Host " "
-    Write-Host "3: Type 3 to set ""MSMQ AlwaysWithoutDS"" to 1"
+    Write-Host "2: Type 2 to install OutSystems Platform Pre-Requirements"
     Write-Host " "
     Write-Host "0: Type 0 to go back to the Main Menu"
     Write-Host " "
@@ -74,21 +83,15 @@ function ToolsMenu
     switch ($selectedTools)
     {
         1 {
-            'You chose to disable SSLv3'
-             & regedit /s $ToolsDir\DisableSSLv3.reg
+            'You chose OutSystems Platform Pre-Requirements validation'
+             & $PreReqDir\Installation_Validator.ps1
              exitCode
              pause
 			 
       } 2 {
-            'You chose to disable FIPS Compliant Algorithms'
-             ## Were we will list the available tools and invoke them accordingly.
-             & regedit /s $ToolsDir\DisableFIPS.reg
-             exitCode
-             pause
-			 
-      } 3 {
-            'You chose to set ""MSMQ AlwaysWithoutDS"" to 1'
-             & regedit /s $ToolsDir\SetMSMQAlwaysWithoutDS.reg
+            'You chose OutSystems Platform Pre-Requirements installation'
+           $PreReqDir = "C:\Users\Administrator\Desktop\PlatformOpsToolBoxBackUp\InstallationValidator\Windows"
+             & $PreReqDir\Pre-Requirements_Installator.ps1 -ScriptPath  $MainDir
              exitCode
              pause
 			 
@@ -105,7 +108,7 @@ MainMenu
 If ($xExitSession){
 	exit
 }else{
-	& "$MainDir\PlatformOpsToolbox.ps1" #… Loop the function
+	& "$MainDir\PlatformOpsToolbox.ps1" #â€¦ Loop the function
 	}
 
 
