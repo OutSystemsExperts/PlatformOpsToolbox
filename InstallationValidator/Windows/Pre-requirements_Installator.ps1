@@ -51,7 +51,7 @@ if ($PlatformVersion -eq "10" )
       }
     }
  
-    if ($NET46Version -Match "4.6.1" -or $NET46Version -Match "4.6.2")
+    if ($NET46Version -Match "4.6.1" -or $NET46Version -Match "4.6.2" -or $NET46Version -Match "4.7")
     {
         write-host ".NET Framework 4.6.1 version or superior is installed" "`n" -ForegroundColor Green
     }
