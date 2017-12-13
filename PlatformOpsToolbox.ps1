@@ -36,11 +36,7 @@ function MainMenu
     Write-Host "1: Type '1' to access the OutSytems Platform pre-requirements menu."
     if(!$OS){
         Write-Host " "
-        Write-Host "2: Type '2' to install the OutSytems Platform."
-    }
-    if($OS){
-        Write-Host " "
-        Write-Host "2: Type '2' to run system tunning for OutSytems Platform."
+        Write-Host "2: Type '2' to run the OutSytems Platform tuning reccomendations script."
     }
     Write-Host " "
     Write-Host "Quit: Type anything else to quit."
@@ -53,7 +49,7 @@ function MainMenu
 			ValidatorMenu
             
 		} 2 {
-			& $InstallerDir\Platform_Installer.ps1
+			TuningMenu
 			
 		} default { 
 			$global:xExitSession=$true;
@@ -102,7 +98,84 @@ function ValidatorMenu
     }
 
 }
-		
+
+function TuningMenu
+{
+    param (
+        [string]$Title = 'OutSystems Platform Pre-Requirements Menu'
+    )
+    Clear-Host
+    Write-Host "================ $Title ================"
+    Write-Host " "
+    Write-Host "1: Type 1 to validate OutSystems Platform Pre-Requirements on this server"
+    Write-Host " "
+    Write-Host "2: Type 2 to install OutSystems Platform Pre-Requirements"
+    Write-Host " "
+    Write-Host "0: Type 0 to go back to the Main Menu"
+    Write-Host " "
+    Write-Host "Quit: Type anything else to quit."
+    Write-Host " "
+	
+    $selectedTools = Read-Host "Please type your selection"
+    switch ($selectedTools)
+    {
+        1 {
+            'You chose OutSystems Platform Pre-Requirements validation'
+             & $PreReqDir\Installation_Validator.ps1
+             exitCode
+             pause
+			 
+      } 2 {
+            'You chose OutSystems Platform Pre-Requirements installation'
+             & $PreReqDir\Pre-Requirements_Installator.ps1 -ScriptPath  $MainDir
+             exitCode
+             pause
+			 
+      } 0 {
+             
+      } default { 
+			 $global:xExitSession=$true;
+		}
+    }
+
+}
+
+function TuningMenu
+{
+param (
+        [string]$Title = 'OutSystems Platform Tuning Script'
+    )
+    Clear-Host
+    Write-Host "================ $Title ================"
+    Write-Host " "
+    Write-Host "This script will change all parameters as described on the OutSystems checklist regarding IIS, Windows and ASP tunables. "
+    Write-Host " "
+    Write-Host "================ Run the Tuning Script ================ "
+    Write-Host " "
+    Write-Host " "
+    Write-Host "1: Type 1 to run the script."
+    Write-Host " "
+    Write-Host "Quit: Type anything else to quit."
+    Write-Host " "
+$selectedTools = Read-Host "Please type your selection"
+    switch ($selectedTools)
+    {
+        1 {
+            'You chose OutSystems Platform Pre-Requirements validation'
+             & $InstallerDir\OutSystems_Platform_Tunning.ps1
+             exitCode
+             pause
+			 
+      } 0 {
+             
+      } default { 
+			 $global:xExitSession=$true;
+		}
+    }
+
+}
+
+
 MainMenu
 If ($xExitSession){
 	exit
