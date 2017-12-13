@@ -90,7 +90,6 @@ function ValidatorMenu
 			 
       } 2 {
             'You chose OutSystems Platform Pre-Requirements installation'
-           $PreReqDir = "C:\Users\Administrator\Desktop\PlatformOpsToolBoxBackUp\InstallationValidator\Windows"
              & $PreReqDir\Pre-Requirements_Installator.ps1 -ScriptPath  $MainDir
              exitCode
              pause
