@@ -349,7 +349,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Net-Ext"}
   if($CheckInstalled.Installed)
   {
-    Write-Host 'Web Server Server .NET 3.5 Extensibility is installed' "`n" -ForegroundColor Green | tee-object –FilePath "c:\temp\teste2.htm"
+    Write-Host 'Web Server Server .NET 3.5 Extensibility is installed' "`n" -ForegroundColor Green
   }
   Else
   {
@@ -361,7 +361,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   $CheckInstalled = Get-WindowsFeature -ComputerName $ComputerName | Where-Object {$_.Name -eq "Web-Net-Ext45"}
   if($CheckInstalled.Installed)
   {
-    Write-Host 'Web Server Server .NET 4.5 Extensibility is installed' "`n" -ForegroundColor Green | tee-object –FilePath "c:\temp\teste2.htm"
+    Write-Host 'Web Server Server .NET 4.5 Extensibility is installed' "`n" -ForegroundColor Green
   }
   Else
   {
@@ -377,7 +377,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   }
   Else
   {
-    Write-Host 'Web Server Server ASP .NET 3.5 is installed' "`n" -ForegroundColor Red
+    Write-Host 'Web Server Server ASP .NET 3.5 is not installed' "`n" -ForegroundColor Red
   }
 
   # IIS feature ASP .NET 4.5
@@ -389,7 +389,7 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   }
   Else
   {
-    Write-Host 'Web Server Server ASP .NET 4.5 is installed' "`n" -ForegroundColor Red
+    Write-Host 'Web Server Server ASP .NET 4.5 is not installed' "`n" -ForegroundColor Red
   }
 
   # IIS feature ISAPI Extensions
