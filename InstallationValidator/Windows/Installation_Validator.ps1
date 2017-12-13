@@ -1,4 +1,4 @@
-﻿# Parameter computer name
+# Parameter computer name
 Param(
 [string]$ComputerName
 )
@@ -100,6 +100,11 @@ ElseIf($OSVersion.caption -like "*Microsoft Windows Server 2012*" )
 {
   $OSVersion = "2012"
 }
+# Windows Server 2016
+ElseIf($OSVersion.caption -like "*Microsoft Windows Server 2016*" )
+{
+  $OSVersion = "2016"
+}
 # Unsupported Windows Server version
 Else
 {
@@ -112,32 +117,23 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
   Write-Host "Validating Software requirements."
 
   # Validate software pre-requirements
-  # .NET Framework 3.5
-  Write-Host "Validating .NET Framework 3.5" -ForegroundColor Gray  
-  # If not installed it doesn't return anything 
-  $NET35Version = Invoke-Command -ComputerName $ComputerName {Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" -name Version | select -expand Version} -ErrorAction SilentlyContinue
+  
 
-  # If $NET35Version has a value it means .NET Framework 3.5 is installed
-  if($NET35Version)
+ if ($PlatformVersion -eq "9.1" )
   {
-    Write-Host ".NET Framework 3.5 version : "$NET35Version "`n" -ForegroundColor Green 
-  }
-  else{
-    Write-Host ".NET Framework 3.5 is not installed" "`n" -ForegroundColor Red  
-  } 
+    # .NET Framework 4.5
+    Write-Host "Validating .NET Framework 4.5" -ForegroundColor Gray  
+    # If not installed it doesn't return anything
+    $NET45Version = Invoke-Command -ComputerName $ComputerName {Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" -name Version | select -expand Version}
 
-  # .NET Framework 4.5
-  Write-Host "Validating .NET Framework 4.5" -ForegroundColor Gray  
-  # If not installed it doesn't return anything
-  $NET45Version = Invoke-Command -ComputerName $ComputerName {Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" -name Version | select -expand Version}
-
-  # If $NET45Version has a value it means .NET Framework 4.5 is installed
-  if($NET45Version)
-  {
-    Write-Host ".NET Framework 4.5 version : "$NET45Version "`n" -ForegroundColor Green
-  }
-  else{
-    Write-Host ".NET Framework 4.5 is not installed" "`n" -ForegroundColor Red  
+    # If $NET45Version has a value it means .NET Framework 4.5 is installed
+    if($NET45Version)
+    {
+      Write-Host ".NET Framework 4.5 version : "$NET45Version "`n" -ForegroundColor Green
+    }
+    else{
+      Write-Host ".NET Framework 4.5 is not installed" "`n" -ForegroundColor Red  
+    }
   }
 
 
@@ -152,23 +148,18 @@ if($OSVersion -eq "2008" -or $OSVersion -eq "2012")
       name="Product"
       expression={
         switch -regex ($_.Release) {
-          "378675|378758" { [Version]"4.5.1" }
-          "379893" { [Version]"4.5.2" }
-          "393295|393297" { [Version]"4.6" }
-          "394254|394271" { [Version]"4.6.1" }
-          "394802|394806" { [Version]"4.6.2" }
-          {$_ -gt 394806} { [Version]"Undocumented 4.6.2 or higher, please update script" }
+          {$_ -lt 394254} { [Version]"< 4.6.1" }
         }
       }
     }
- 
-    if ($NET46Version -Match "4.6.1" -or $NET46Version -Match "4.6.2")
+    #if ($NET46Version -Match "4.6.1" -or $NET46Version -Match "4.6.2" -or $NET46Version -Match "4.6.2*")
+    if ($NET46Version -match "< 4.6.1")
     {
-        write-host ".NET Framework 4.6.1 version or superior is installed" "`n" -ForegroundColor Green
-    }
-    else
+            write-host ".NET Framework 4.6.1 version or superior is not installed" "`n" -ForegroundColor Red
+     }
+        else
     { 
-        write-host ".NET Framework 4.6.1 version or superior is not installed" "`n" -ForegroundColor Red  
+        write-host ".NET Framework 4.6.1 version or superior is installed" "`n" -ForegroundColor Green  
     }
   }
   
