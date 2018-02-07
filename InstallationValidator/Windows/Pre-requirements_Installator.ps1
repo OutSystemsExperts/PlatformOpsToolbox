@@ -7,7 +7,10 @@
 # --------------------------------------------------------------------
 Import-Module ServerManager -ErrorAction SilentlyContinue
 
-
+$windowsversion = (gwmi win32_operatingsystem).caption
+$is2016 = ($windowsversion -like "*2016*")
+Write-Host "Validating Windows version" -ForegroundColor Gray
+Write-Host "$windowsversion is a supported operating system" "`n" -ForegroundColor Green
 
 $title = "OutSystems Version"
 $message = "Please select the version of OutSystems installation you are installing the requirements for"
@@ -72,6 +75,16 @@ if ($PlatformVersion -eq "10" )
 
 
 # Install Web Server role
+
+if ($is2016)
+    {
+        Write-Host "Validating Application Server Instalation" -ForegroundColor Gray
+        write-host "Application server not required on $windowsversion" "`n" -ForegroundColor Green
+    }
+
+else{
+
+
   Write-Host "Installing Web Server Role" -ForegroundColor Gray
   Add-WindowsFeature -Name "Application-Server"
   Add-WindowsFeature -Name "Web-WebServer"  
@@ -85,7 +98,7 @@ if ($PlatformVersion -eq "10" )
   Else
   {
     Write-Host "Web Server Role installation failed" "`n" -ForegroundColor Red  
-  }
+  }}
   
   #Common HTTP Features  
   # --------------------------------------------------------------------
@@ -152,6 +165,15 @@ if ($PlatformVersion -eq "10" )
   
   
   # ASP.NET 3.5
+  
+  if ($PlatformVersion = "10")
+    {
+        Write-Host "Validating ASP.NET 3.5 Instalation" -ForegroundColor Gray
+        write-host "ASP.NET 3.5 not required on this Outsystems version" "`n" -ForegroundColor Green
+    }
+
+else{
+  
   Write-Host "Installing ASP.NET 3.5" -ForegroundColor Gray
   Add-WindowsFeature -Name "Web-Asp-Net"
   
@@ -163,10 +185,17 @@ if ($PlatformVersion -eq "10" )
   Else
   {
     Write-Host "ASP.NET 3.5 installation has failed" "`n" -ForegroundColor Red  
-  }
+  }}
   
   
   # .NET Extensibility 3.5 
+  if ($PlatformVersion = "10")
+    {
+        Write-Host "Validating ASP.NET 3.5 Instalation" -ForegroundColor Gray
+        write-host "ASP.NET 3.5 not required on this Outsystems version" "`n" -ForegroundColor Green
+    }
+
+else{
   Write-Host "Installing .NET Extensibility 3.5" -ForegroundColor Gray
   Add-WindowsFeature -Name "Web-Net-Ext"
   
@@ -178,7 +207,7 @@ if ($PlatformVersion -eq "10" )
   Else
   {
     Write-Host ".NET Extensibility 3.5  installation has failed" "`n" -ForegroundColor Red  
-  }
+  }}
   
     
   # ISAPI Extensions
@@ -506,7 +535,9 @@ if ($PlatformVersion -eq "10" )
     Write-Host "Windows Search Service does not exists" "`n" -ForegroundColor Green
 	
   }else{
-	Stop-Service WSearch -StartupType Disable
+	Stop-Service WSearch 
+    Set-Service -Name WSearch -StartupType Manual
+    Write-Host "Windows Search Service stopped" "`n" -ForegroundColor Green
   }  
   
   Read-Host -Prompt 'Press any key to exit the validator and close this window'
