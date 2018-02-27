@@ -1,4 +1,6 @@
 ﻿
+Set-ExecutionPolicy Bypass -Force
+
 #Current Installer Script Path
 [string]$InstallerScriptPath = ($pwd).path
 
