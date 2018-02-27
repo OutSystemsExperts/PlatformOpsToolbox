@@ -1,7 +1,11 @@
 ﻿#----OutSystems Platform Tunning----
 #--------------------------
 
-Set-ExecutionPolicy RemoteSigned 
+Set-ExecutionPolicy Bypass -Force
+
+#---- Check Windows server version ----
+$windowsversion = (gwmi win32_operatingsystem).caption
+$Is2016 = ($windowsversion -like "*2016*")
 
 #-----------------------------------
 # Verify if OutSystems Platform is installed
@@ -15,7 +19,7 @@ if(Test-Path $OSPathReg -pathType container){
     #navigate to the app pools root
     cd IIS:\AppPools\
 
-    Write-Host "Tunning Service Center Application Pool" "`n"
+    Write-Host "`nTunning Service Center Application Pool" "`n"
 
     #----Tune Service Center Application Pool----
     #-------------------------
@@ -31,23 +35,32 @@ if(Test-Path $OSPathReg -pathType container){
         $appPool = Get-Item "ServiceCenterAppPool"
     }
 
+
     #Configure the Service Center Application Pool
     $appPool.managedRuntimeVersion = "v4.0"
     $appPool.managedPipelineMode = "Classic"
                 
     #Uncheck all checkboxes under Fixed Intervals group
+
     $appPool.recycling.periodicRestart.time = [TimeSpan]::FromMinutes(0)
     $appPool.recycling.periodicRestart.requests = 0
                 
-    #Remove the Private memory limit usage.
-    $appPool.recycling.periodicRestart.privateMemory = 0
-             
+    #Limit the Private memory usage to be at most 60% of the total physical memory of the machine.
+    Write-Host "Setting private memory usage to be 60% of the total physical memory of the machine. `nLater, you should fine-tune this value according to performance data collected from the application pool." "`n" -ForegroundColor Yellow
+        
+    if($Is2016){
+        $SysMemory = Get-WmiObject -Class Win32_ComputerSystem
+        $appPool.recycling.periodicRestart.privateMemory = [int](($SysMemory.TotalPhysicalMemory / 1024) * 0.6)
+    }else{        
+        $SysMemory = Get-WmiObject -class "Win32_PhysicalMemoryArray"
+        $appPool.recycling.periodicRestart.privateMemory = [int]($SysMemory.MaxCapacity * 0.6)
+    }
+                 
     #Activate all the Runtime recycling events
     $appPool.recycling.logEventOnRecycle = "ConfigChange,IsapiUnhealthy,OnDemand" 
-                
-    #Disable Rapid Failover
-    $appPool.failure.rapidFailProtection = "false"
-    $appPool.processModel.idleTimeout =  [TimeSpan]::FromMinutes(0)
+
+    #Set Idle time-out to 0
+    $appPool.processModel.idleTimeout = [TimeSpan]::FromMinutes(0)
 
     $appPool | Set-Item 
 
@@ -61,16 +74,14 @@ if(Test-Path $OSPathReg -pathType container){
 
     Write-Host "Service Center Application Pool Tunning Complete" "`n" -ForegroundColor Green
 
-
-
+    
 
     #----Tune Lifetime Application Pool----
     #--------------------------------------
-     
-    Write-Host "Tunning Lifetime Application Pool" "`n"
 
     #Check if LifeTime was installed
     if($site.path -match "LifeTime"){
+        Write-Host "Tunning Lifetime Application Pool" "`n"
 
         #check if the application pool doesn't exists
         if (!(Test-Path "LifeTimeAppPool" -pathType container)){
@@ -91,22 +102,29 @@ if(Test-Path $OSPathReg -pathType container){
         $appPool.recycling.periodicRestart.requests = 0
                 
         #Limit the Private memory usage to be at most 60% of the total physical memory of the machine.
-        $SysMemory = Get-WmiObject -class "Win32_PhysicalMemoryArray"
-        $appPool.recycling.periodicRestart.privateMemory = [int]($SysMemory.MaxCapacity * 0.6)
+        Write-Host "Setting private memory usage to be 60% of the total physical memory of the machine. `nLater, you should fine-tune this value according to performance data collected from the application pool." "`n" -ForegroundColor Yellow
+        
+        if($Is2016){
+            $SysMemory = Get-WmiObject -Class Win32_ComputerSystem
+            $appPool.recycling.periodicRestart.privateMemory = [int](($SysMemory.TotalPhysicalMemory / 1024) * 0.6)
+        }else{        
+            $SysMemory = Get-WmiObject -class "Win32_PhysicalMemoryArray"
+            $appPool.recycling.periodicRestart.privateMemory = [int]($SysMemory.MaxCapacity * 0.6)
+        }
+         
              
         #Activate all the Runtime recycling events
         $appPool.recycling.logEventOnRecycle = "ConfigChange,IsapiUnhealthy,OnDemand" 
-                
-        #Disable Rapid Failover
-        $appPool.failure.rapidFailProtection = "false"
-        $appPool.processModel.idleTimeout =  [TimeSpan]::FromMinutes(0)
+
+        #Set Idle time-out to 0
+        $appPool.processModel.idleTimeout = [TimeSpan]::FromMinutes(0)
 
         $appPool | Set-Item 
 
         #Verify if exists any LifeTime application
         foreach($app in $site){
         
-            if($app.path -match "LifeTime"){
+            if(($app.path -match "LifeTime") -or ($app.path -match "LT")){
             #If exists any LifeTime application move it to LifeTimeAppPool
                 
                 #Move application to LifeTimeAppPool
@@ -120,9 +138,10 @@ if(Test-Path $OSPathReg -pathType container){
             #Move PerformanceMonitor application to LifeTimeAppPool   
             Set-ItemProperty 'IIS:\Sites\Default Web Site\PerformanceMonitor' applicationPool LifeTimeAppPool            
         }
+    
+        Write-Host "LifeTime Application Pool Tunning Complete" "`n" -ForegroundColor Green
     }
-
-    Write-Host "LifeTime Application Pool Tunning Complete" "`n" -ForegroundColor Green
+       
 
     #Write-Host "Tunning IIS"
 
@@ -144,12 +163,12 @@ if(Test-Path $OSPathReg -pathType container){
 
     # Get Windows directory
     $Windowspath = [Environment]::GetFolderPath("Windows")
-    $Windowspath 
 
     if($OSDrive -eq $Windowspath.Chars(0)){
 
         Write-Host "The OutSystems Platform was installed in the same disk partition as Windows, it's advisable to install the OutSystems Platform in a separate partition for performance improvements" -ForegroundColor Yellow
 
+        Write-Host "IIS temporary settings configuration aborted `n" -ForegroundColor DarkYellow
 
     }else{
         
@@ -262,45 +281,44 @@ if(Test-Path $OSPathReg -pathType container){
     #Disabling SSL 3.0
     if(!(Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0")){
         New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols" -Name "SSL 3.0"
-        
-        if(!(Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0")){
-            New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client" -Name Client
+    } 
+        if(!(Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client")){
+            New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0" -Name Client
         }
 
         if(!(Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server")){
            New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0" -Name Server
         }
 
-        if((Get-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client").GetValue("DisabledByDefault") -ne 1){
-           New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client" -Name DisabledByDefault -PropertyType DWORD -Value 1
-        }
+            if((Get-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client").GetValue("DisabledByDefault") -ne 1){
+               New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client" -Name DisabledByDefault -PropertyType DWORD -Value 1
+            }
 
-        if((Get-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server").GetValue("Enable") -ne 0){
-           New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server" -Name Enable -PropertyType DWORD -Value 0
-        }    
-    }
+            if((Get-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server").GetValue("Enable") -ne 0){
+               New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server" -Name Enable -PropertyType DWORD -Value 0
+            }    
+    
 
 
     #Disabling SSL 2.0
     if(!(Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0")){
         New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols" -Name "SSL 2.0"
-        
-        if(!(Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0")){
-            New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Client" -Name Client
+    }   
+        if(!(Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Client")){
+            New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0" -Name Client
         }
 
         if(!(Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Server")){
            New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0" -Name Server
         }
 
-        if((Get-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Client").GetValue("DisabledByDefault") -ne 1){
-           New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Client" -Name DisabledByDefault -PropertyType DWORD -Value 1
-        }
+            if((Get-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Client").GetValue("DisabledByDefault") -ne 1){
+               New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Client" -Name DisabledByDefault -PropertyType DWORD -Value 1
+            }
 
-        if((Get-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Server").GetValue("Enable") -ne 0){
-           New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Server" -Name Enable -PropertyType DWORD -Value 0
-        }    
-    }
+            if((Get-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Server").GetValue("Enable") -ne 0){
+               New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Server" -Name Enable -PropertyType DWORD -Value 0
+            }    
 
     Write-Host "SSLv3 Vulnerability Prevention Complete" "`n" -ForegroundColor Green
 
@@ -308,16 +326,17 @@ if(Test-Path $OSPathReg -pathType container){
     #Configure upload size limits
     #----------------------------
 
-
+    #Get the file
     [System.XML.XMLDocument]$XmlDocument = Get-Content -Path "$Windowspath\Microsoft.NET\Framework64\v4.0.30319\CONFIG\machine.config"
 
-
+    #Check if maxRequestLength exists and sets a value
     if($XmlDocument.DocumentElement.'system.web'.httpRuntime -ne $null){
 
         $XmlDocument.DocumentElement.'system.web'.httpRuntime.maxRequestLength = "131072"
 
     }else{
-
+        
+        #Creates maxRequestLength and sets a value
         [System.XML.XMLElement]$NewNodeChild = $XmlDocument.CreateElement("httpRuntime")
         
         $NewNodeChild.SetAttribute("maxRequestLength", "131072")
@@ -330,15 +349,17 @@ if(Test-Path $OSPathReg -pathType container){
 
     #--------------------
 
-
+    #Get the file
     [System.XML.XMLDocument]$XmlDocument = Get-Content -Path  "$Windowspath\system32\inetsrv\config\applicationHost.config"
 
+    #Check if requestLimits exists and sets a value
     if($XmlDocument.DocumentElement.'system.webServer'.security.requestFiltering.requestLimits -ne $null){
         
-        $XmlDocument.DocumentElement.'system.webServer'.security.requestFiltering.requestLimits.maxAllowedContentLength = 134217728
+        $XmlDocument.DocumentElement.'system.webServer'.security.requestFiltering.requestLimits.maxAllowedContentLength = "134217728"
 
     }else{
 
+        #Creates requestLimits and sets a value
         [System.XML.XMLElement]$NewNodeChild = $XmlDocument.CreateElement("requestLimits")
         $NewNodeChild.SetAttribute("maxAllowedContentLength", "134217728")
         $XmlDocument.DocumentElement.'system.webServer'.security.requestFiltering.AppendChild($NewNodeChild)
@@ -347,6 +368,7 @@ if(Test-Path $OSPathReg -pathType container){
 
     $XmlDocument.Save("$Windowspath\system32\inetsrv\config\applicationHost.config")
 
+    Write-Host "Upload size limits configured `n" -ForegroundColor Green
 
 }else{
 
@@ -355,5 +377,7 @@ if(Test-Path $OSPathReg -pathType container){
     Write-Host "OutSystems Platform Tunning aborted" "`n" -ForegroundColor Yellow
 
 }
+
+Write-Host "Server tuning complete!`n" -ForegroundColor Green
 
 Read-Host -Prompt 'Press any key to exit the validator and close this window'
