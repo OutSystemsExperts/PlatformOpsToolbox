@@ -9,8 +9,8 @@ Set-ExecutionPolicy Bypass -Force
 # --------------------------------------------------------------------
 Import-Module ServerManager -ErrorAction SilentlyContinue
 
-$windowsversion = (gwmi win32_operatingsystem).caption
-$is2016 = ($windowsversion -like "*2016*")
+$windowsInfo = (gwmi win32_operatingsystem)
+$Is2016 = ($windowsInfo.caption -like "*2016*")
 Write-Host "Validating Windows version" -ForegroundColor Gray
 Write-Host "$windowsversion is a supported operating system" "`n" -ForegroundColor Green
 
@@ -345,12 +345,10 @@ else{
   Add-WindowsFeature -Name "Web-Stat-Compression"
   
   $CheckIfInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Stat-Compression"} -ErrorAction SilentlyContinue
-  if($CheckIfInstalled.Installed)
-  {
+  if($CheckIfInstalled.Installed){
     Write-Host "Static Content Compression was successfully installed" "`n" -ForegroundColor Green
   }
-  Else
-  {
+  Else{
     Write-Host "Static Content Compression installation has failed" "`n" -ForegroundColor Red  
   }
   
@@ -360,12 +358,10 @@ else{
   Add-WindowsFeature -Name "Web-Dyn-Compression"
   
   $CheckIfInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Dyn-Compression"} -ErrorAction SilentlyContinue
-  if($CheckIfInstalled.Installed)
-  {
+  if($CheckIfInstalled.Installed){
     Write-Host "Dynamic Content Compression was successfully installed" "`n" -ForegroundColor Green
   }
-  Else
-  {
+  Else{
     Write-Host "Dynamic Content Compression installation has failed" "`n" -ForegroundColor Red  
   }
   
@@ -378,12 +374,10 @@ else{
   Add-WindowsFeature -Name "Web-Mgmt-Console"
   
   $CheckIfInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Mgmt-Console"} -ErrorAction SilentlyContinue
-  if($CheckIfInstalled.Installed)
-  {
+  if($CheckIfInstalled.Installed){
     Write-Host "IIS Management Console was successfully installed" "`n" -ForegroundColor Green
   }
-  Else
-  {
+  Else{
     Write-Host "IIS Management Console installation has failed" "`n" -ForegroundColor Red  
   }
   
@@ -404,12 +398,10 @@ else{
   Add-WindowsFeature -Name "Web-Metabase"
   
   $CheckIfInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "Web-Metabase"} -ErrorAction SilentlyContinue
-  if($CheckIfInstalled.Installed)
-  {
+  if($CheckIfInstalled.Installed){
     Write-Host "IIS 6 Management Compatibility was successfully installed" "`n" -ForegroundColor Green
   }
-  Else
-  {
+  Else{
     Write-Host "IIS 6 Management Compatibility installation has failed" "`n" -ForegroundColor Red  
   }
   
@@ -422,12 +414,10 @@ else{
   Add-WindowsFeature -Name "MSMQ-Server"
   
   $CheckIfInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "MSMQ-Server"} -ErrorAction SilentlyContinue
-  if($CheckIfInstalled.Installed)
-  {
+  if($CheckIfInstalled.Installed){
     Write-Host "Message Queuing Server was successfully installed" "`n" -ForegroundColor Green
   }
-  Else
-  {
+  Else{
     Write-Host "Message Queuing Server installation has failed" "`n" -ForegroundColor Red  
   }
   
@@ -436,12 +426,10 @@ else{
   Add-WindowsFeature -Name "WAS-Process-Model"
   
   $CheckIfInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "WAS-Process-Model"} -ErrorAction SilentlyContinue
-  if($CheckIfInstalled.Installed)
-  {
+  if($CheckIfInstalled.Installed){
     Write-Host "Process Model was successfully installed" "`n" -ForegroundColor Green
   }
-  Else
-  {
+  Else{
     Write-Host "Process Model installation has failed" "`n" -ForegroundColor Red  
   }
   
@@ -450,12 +438,10 @@ else{
   Add-WindowsFeature -Name "WAS-NET-Environment"
   
   $CheckIfInstalled = Get-WindowsFeature | Where-Object {$_.Name -eq "WAS-NET-Environment"} -ErrorAction SilentlyContinue
-  if($CheckIfInstalled.Installed)
-  {
+  if($CheckIfInstalled.Installed){
     Write-Host ".NET Environment was successfully installed" "`n" -ForegroundColor Green
   }
-  Else
-  {
+  Else{
     Write-Host ".NET Environment installation has failed" "`n" -ForegroundColor Red  
   }
   
@@ -542,4 +528,40 @@ else{
     Write-Host "Windows Search Service stopped" "`n" -ForegroundColor Green
   }  
   
+  
+  #Check Server disk partitions
+  #---------------------------------------------------------------------
+
+  Write-Host "Validating server disk partitions`n" -ForegroundColor Gray
+
+  $Drives = Get-PSDrive -PSProvider FileSystem
+  foreach($Partition in $Drives){
+    
+    Write-Host "`tDrive" $Partition.Root "detected`n"
+
+    #Validate drive where Operating System is installed and propose a drive to install Outsystems Platform
+    If($windowsInfo.SystemDirectory.Chars(0) -eq $Partition.Name){
+        Write-Host "`tOperating systems installed in drive" $windowsInfo.SystemDirectory.Substring(0,3) ", its advised to" -ForegroundColor Yellow -NoNewline
+        Write-Host " NOT " -ForegroundColor Red -NoNewline 
+        Write-Host "install OutSystems Platform in this drive`n" -ForegroundColor Yellow    
+    }else{
+        if($Partition.Free -ilt 10737418240){
+            Write-Host "`tThis drive has" -NoNewline
+            Write-Host " insufficient " -ForegroundColor Red -NoNewline
+            Write-Host "memory, it's" -NoNewline
+            Write-Host " NOT OK " -ForegroundColor Red -NoNewline
+            Write-Host "to install OutSystems Platform on this drive`n"
+        }else{
+            Write-Host "`tThis drive has" -NoNewline
+            Write-Host " sufficient " -ForegroundColor Green -NoNewline
+            Write-Host "memory, it's" -NoNewline
+            Write-Host " OK " -ForegroundColor Green -NoNewline
+            Write-Host "to install OutSystems Platform on this drive`n"
+        }
+    }
+    
+  }
+  
+  Write-Host "OutSystems Platform pre-requirements installation complete!`n" -ForegroundColor Green
+
   Read-Host -Prompt 'Press any key to exit the validator and close this window'
