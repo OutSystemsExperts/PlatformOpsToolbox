@@ -5,14 +5,60 @@ Set-ExecutionPolicy Bypass -Force
 [string]$InstallerScriptPath = ($pwd).path
 
 
+# Auxiliary variables
+$minimumRAM = 4294967296
+$minimumCPUCores = 2
+
+############
+# Hardware #
+############
+# Validate hardware minimum requirements first
+$hardwareSpecs = Get-WmiObject Win32_ComputerSystem 
+$processors = get-wmiobject win32_processor
+$cores = @($processors).count * @($processors)[0].NumberOfCores
+
+# Validate number of CPU Cores
+Write-Host "Validating hardware minimum requirements" -ForegroundColor Gray 
+
+
+#if( $coresl  -lt $minimumCPUCores)
+if($hardwareSpecs.NumberOfLogicalProcessors -lt $minimumCPUCores)
+{
+  Write-Host "Number of CPU cores doesn't meet the minimum requirements" -ForegroundColor Red
+
+}  
+else
+{
+  Write-Host "CPU meets the minimum requirements" -ForegroundColor Green 
+}
+
+# Validate physical memory
+if($($hardwareSpecs.TotalPhysicalMemory) -lt $minimumRAM)
+{
+  Write-Host "Available RAM memory doesn't meet the minimum requirements"`n"" -ForegroundColor Red
+
+}
+else
+{
+  Write-Host "Available RAM memory meets the minimum requirements"`n"" -ForegroundColor Green 
+}
+
+
 # Loading Feature Installation Modules
 # --------------------------------------------------------------------
 Import-Module ServerManager -ErrorAction SilentlyContinue
 
 $windowsInfo = (gwmi win32_operatingsystem)
 $Is2016 = ($windowsInfo.caption -like "*2016*")
-Write-Host "Validating Windows version" -ForegroundColor Gray
-Write-Host "$windowsversion is a supported operating system" "`n" -ForegroundColor Green
+
+#Validating operating system version
+Write-Host "Validating Windows version`n" -ForegroundColor Gray
+
+if(($windowsInfo.caption -like "*2008 R2*") -or ($windowsInfo.caption -like "*2012 R2*") -or ($windowsInfo.caption -like "*2016*")){
+    Write-Host $windowsInfo.caption"is a supported operating system" "`n" -ForegroundColor Green
+}else{
+    Write-Host $windowsInfo.caption"is not a supported operating system" "`n" -ForegroundColor Red
+}
 
 $title = "OutSystems Version"
 $message = "Please select the version of OutSystems installation you are installing the requirements for"
